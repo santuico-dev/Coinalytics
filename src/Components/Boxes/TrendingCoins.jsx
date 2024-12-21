@@ -1,0 +1,178 @@
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  Avatar,
+  List,
+  ListItem,
+} from "@mui/material";
+import { styled } from "@mui/system";
+import axios from "axios";
+import { LocalFireDepartment } from "@mui/icons-material";
+
+const GlassContainer = styled(Paper)(({ theme }) => ({
+  background: "rgba(255, 255, 255, 0.1)",
+  height: "200px",
+  backdropFilter: "blur(10px)",
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(3),
+  color: "#fff",
+  transition: "transform 0.3s ease",
+  "&:hover": {
+    transform: "translateY(-5px)",
+  },
+}));
+
+/*
+***************************
+  FETCHING  
+***************************
+*/
+
+const TrendingCoins = () => {
+  const [trendingCoins, setTrendingCoins] = useState([]);
+
+  useEffect(() => {
+    fetchTrendingCoins();
+  }, []);
+
+  //refresh fear greed meter & trending coins
+  useEffect(() => {
+    const refreshTrendingCoins = setInterval(() => {
+      fetchTrendingCoins();
+    }, 30000); //30 seconds
+    return () => clearInterval(refreshTrendingCoins);
+  }, []);
+
+  const fetchTrendingCoins = async () => {
+    try {
+      const trendingResponse = await axios.get(
+        "https://api.coingecko.com/api/v3/search/trending",
+        {
+          signal: AbortSignal.timeout(8000),
+          cache: true,
+        }
+      );
+
+      const topThreeCoins = trendingResponse?.data?.coins
+        ?.slice(0, 3)
+        .sort((a, b) => a.item.score - b.item.score);
+      setTrendingCoins(topThreeCoins);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div>
+      <GlassContainer>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <LocalFireDepartment size={24} />
+          <Typography variant="h6" sx={{ color: "#fff", fontFamily: "Kanit" }}>
+            Trending Coins (24h)
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            mt: -2,
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            sx={{
+              width: "100%",
+              overflow: "auto",
+            }}
+          >
+            <List sx={{ width: "100%" }}>
+              {trendingCoins?.map((coin) => (
+                <ListItem
+                  key={coin?.item?.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    py: 1,
+                    px: 2,
+                    "&:hover": {
+                      bgcolor: "rgba(255, 255, 255, 0.05)",
+                      borderRadius: 1,
+                    },
+                    transition: "background-color 0.2s",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Avatar
+                      src={coin?.item?.small}
+                      alt={coin?.item?.name}
+                      sx={{ width: 32, height: 32 }}
+                    />
+                    <Box>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          whiteSpace: "nowrap",
+                          fontFamily: "Kanit",
+                        }}
+                      >
+                        {coin?.item?.name}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ textAlign: "right", flexShrink: 0 }}>
+                    <Typography sx={{ color: "white", fontFamily: "Kanit" }}>
+                      ${coin?.item?.price_btc.toFixed(8)}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                        color:
+                          coin?.item?.data?.price_change_percentage_24h?.usd >=
+                          0
+                            ? "#2ecc71"
+                            : "#cb4335",
+                      }}
+                    >
+                      {coin?.item?.data?.price_change_percentage_24h?.usd >= 0
+                        ? "▲"
+                        : "▼"}
+                      <Typography sx={{ ml: 0.5, fontFamily: "Kanit" }}>
+                        {Math.abs(
+                          coin?.item?.data?.price_change_percentage_24h?.usd
+                        ).toFixed(2)}
+                        %
+                      </Typography>
+                    </Box>
+                  </Box>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        </Box>
+      </GlassContainer>
+    </div>
+  );
+};
+
+export default TrendingCoins;

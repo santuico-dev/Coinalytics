@@ -235,9 +235,16 @@ const CryptoListTable = () => {
                         >
                           {coin?.SPOT_MOVING_24_HOUR_CHANGE_PERCENTAGE_USD?.toLocaleString()
                             .length > 0
-                            ? `${parseFloat(
-                                coin?.SPOT_MOVING_24_HOUR_CHANGE_PERCENTAGE_USD
-                              )?.toFixed(2)}%`
+                            ? `
+                            ${
+                              coin?.SPOT_MOVING_24_HOUR_CHANGE_PERCENTAGE_USD >=
+                              0
+                                ? "▲"
+                                : "▼"
+                            }
+                            ${parseFloat(
+                              coin?.SPOT_MOVING_24_HOUR_CHANGE_PERCENTAGE_USD
+                            )?.toFixed(2)}%`
                             : "-"}
                         </TableCell>
                         <TableCell
@@ -255,9 +262,15 @@ const CryptoListTable = () => {
                         >
                           {coin?.SPOT_MOVING_7_DAY_CHANGE_PERCENTAGE_USD?.toLocaleString()
                             .length > 0
-                            ? `${parseFloat(
-                                coin?.SPOT_MOVING_7_DAY_CHANGE_PERCENTAGE_USD
-                              )?.toFixed(2)}%`
+                            ? `
+                            ${
+                              coin?.SPOT_MOVING_7_DAY_CHANGE_PERCENTAGE_USD >= 0
+                                ? "▲"
+                                : "▼"
+                            }
+                            ${parseFloat(
+                              coin?.SPOT_MOVING_7_DAY_CHANGE_PERCENTAGE_USD
+                            )?.toFixed(2)}%`
                             : "-"}
                         </TableCell>
                         <TableCell
@@ -276,9 +289,15 @@ const CryptoListTable = () => {
                         >
                           {coin?.SPOT_MOVING_30_DAY_CHANGE_PERCENTAGE_USD?.toLocaleString()
                             .length > 0
-                            ? `${parseFloat(
-                                coin?.SPOT_MOVING_30_DAY_CHANGE_PERCENTAGE_USD
-                              )?.toFixed(2)}%`
+                            ? `
+                            ${
+                              coin?.SPOT_MOVING_30_DAY_CHANGE_PERCENTAGE_USD >= 0
+                                ? "▲"
+                                : "▼"
+                            }
+                            ${parseFloat(
+                              coin?.SPOT_MOVING_30_DAY_CHANGE_PERCENTAGE_USD
+                            )?.toFixed(2)}%`
                             : "-"}
                         </TableCell>
                         <TableCell sx={{ color: "#fff", fontFamily: "Inter" }}>
@@ -318,7 +337,6 @@ const CryptoListTable = () => {
           count={totalPages}
           page={currentPage}
           onChange={(event, page) => {
-            console.log(page);
             setCurrentPage(page);
           }}
           variant="outlined"

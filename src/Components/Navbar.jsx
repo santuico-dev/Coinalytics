@@ -91,7 +91,6 @@ function Navbar() {
             >
               <LogoImage src={logoPic} alt="logo" />
             </Box>
-
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"

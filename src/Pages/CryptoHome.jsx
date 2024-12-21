@@ -5,22 +5,14 @@ import {
   Typography,
   Paper,
   Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  useMediaQuery,
-  useTheme,
-  Avatar,
-  Pagination,
-  setRef,
 } from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import Navbar from "../Components/Navbar";
 import CryptoListTable from "../Components/Tables/CryptoListTable";
 import axios from "axios";
+import TrendingCoins from "../Components/Boxes/TrendingCoins";
+import MarketCap from "../Components/Boxes/MarketCap";
+import FearGreedMeter from "../Components/Boxes/FearGreedMeter";
 
 /*
 ***************************
@@ -51,18 +43,6 @@ const drift = keyframes`
     transform: translate(0, 0);
   }
 `;
-
-const GlassContainer = styled(Paper)(({ theme }) => ({
-  background: "rgba(255, 255, 255, 0.1)",
-  backdropFilter: "blur(10px)",
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(3),
-  color: "#fff",
-  transition: "transform 0.3s ease",
-  "&:hover": {
-    transform: "translateY(-5px)",
-  },
-}));
 
 const BackgroundAnimation = styled("div")({
   position: "fixed",
@@ -141,41 +121,7 @@ const AnimatedBackground = () => {
 ***************************
 */
 
-
-
 const CryptoHome = () => {
-
-  const [fearGreedIndexValueClassification, setFearGreedIndexValueClassification] = useState('');
-  const [fearGreedValue, setFearGreedValue] = useState(0);
-  
-  useEffect(() => {
-    fetchFearGreedIndex();
-  }, [])
-
-  const fetchFearGreedIndex = async () => {
-    try {
-      await axios.get(
-        "https://api.alternative.me/fng/",
-        {
-          signal: AbortSignal.timeout(8000),
-          cache: true
-        }
-      ).then((response) => {
-        response?.data?.data?.map(async (data) => {
-          setFearGreedIndexValueClassification(await data?.value_classification);
-          setFearGreedValue(await data?.value);
-        })  
-      })
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const statsBoxes = [
-    { title: "Total Market Cap", value: "$2.5T" },
-    { title: "Total Volume 24h", value: "$125B" },
-    { title: "Fear Greed Index", value: fearGreedValue },
-  ];
 
   return (
     <div>
@@ -199,24 +145,24 @@ const CryptoHome = () => {
           >
             Cyrpto Market by Market Cap
           </Typography>
-          {/* MEMA STATS */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
-            {statsBoxes.map((box, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <GlassContainer>
-                  <Typography variant="h6" gutterBottom>
-                    {box.title}
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: "500" }}>
-                    {box.value}
-                  </Typography>
-                </GlassContainer>
-              </Grid>
-            ))}
-          </Grid>
+            {/* MARKET CAP & 24 HR VOLUME */}
+            <Grid item xs={12} md={4}>
+              <MarketCap/>
+            </Grid>
 
+            {/* TRENDING COINS */}
+            <Grid item xs={12} md={4}>
+              <TrendingCoins/>
+            </Grid>
+
+            {/* FEAR GREED METER */}
+            <Grid item xs={12} md={4}>
+              <FearGreedMeter/>
+            </Grid>
+          </Grid>
           {/* CRYTPO TABLE */}
-          <CryptoListTable/>
+          <CryptoListTable />
         </Container>
       </StyledBox>
     </div>
