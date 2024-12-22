@@ -7,6 +7,7 @@ import {
   Avatar,
   List,
   ListItem,
+  Skeleton,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import axios from "axios";
@@ -31,7 +32,7 @@ const GlassContainer = styled(Paper)(({ theme }) => ({
 ***************************
 */
 
-const TrendingCoins = () => {
+const TrendingCoins = ({ loading }) => {
   const [trendingCoins, setTrendingCoins] = useState([]);
 
   useEffect(() => {
@@ -76,9 +77,22 @@ const TrendingCoins = () => {
             gap: 1,
           }}
         >
-          <LocalFireDepartment size={24} />
+          {loading ? (
+            <Skeleton
+              variant="circular"
+              width={40}
+              height={40}
+              sx={{ bgcolor: "#979a9a" }}
+            />
+          ) : (
+            <LocalFireDepartment size={24} />
+          )}
           <Typography variant="h6" sx={{ color: "#fff", fontFamily: "Kanit" }}>
-            Trending Coins (24h)
+            {loading ? (
+              <Skeleton width={200} height={40} sx={{ bgcolor: "#979a9a" }} />
+            ) : (
+              "Trending Coins (24h)"
+            )}
           </Typography>
         </Box>
         <Box
@@ -121,25 +135,48 @@ const TrendingCoins = () => {
                       flexShrink: 0,
                     }}
                   >
-                    <Avatar
-                      src={coin?.item?.small}
-                      alt={coin?.item?.name}
-                      sx={{ width: 32, height: 32 }}
-                    />
+                    {loading ? (
+                      <Skeleton
+                        variant="circular"
+                        width={40}
+                        height={40}
+                        sx={{ bgcolor: "#979a9a" }}
+                      />
+                    ) : (
+                      <Avatar
+                        src={coin?.item?.small}
+                        alt={coin?.item?.name}
+                        sx={{ width: 32, height: 32 }}
+                      />
+                    )}
                     <Box>
-                      <Typography
-                        sx={{
-                          color: "white",
-                          whiteSpace: "nowrap",
-                          fontFamily: "Kanit",
-                        }}
-                      >
-                        {coin?.item?.name}
-                      </Typography>
+                      {loading ? (
+                        <Skeleton
+                          width={230}
+                          height={40}
+                          sx={{ bgcolor: "#979a9a" }}
+                        />
+                      ) : (
+                        <Typography
+                          sx={{
+                            color: "white",
+                            whiteSpace: "nowrap",
+                            fontFamily: "Kanit",
+                          }}
+                        >
+                          {coin?.item?.name}
+                        </Typography>
+                      )}
                     </Box>
                   </Box>
                   <Box sx={{ textAlign: "right", flexShrink: 0 }}>
-                    <Typography sx={{ color: "white", fontFamily: "Kanit" }}>
+                    <Typography
+                      sx={{
+                        color: "white",
+                        fontFamily: "Kanit",
+                        visibility: loading ? "hidden" : "visible",
+                      }}
+                    >
                       ${coin?.item?.price_btc.toFixed(8)}
                     </Typography>
                     <Box
@@ -154,14 +191,13 @@ const TrendingCoins = () => {
                             : "#cb4335",
                       }}
                     >
-                      {coin?.item?.data?.price_change_percentage_24h?.usd >= 0
-                        ? "▲"
-                        : "▼"}
-                      <Typography sx={{ ml: 0.5, fontFamily: "Kanit" }}>
-                        {Math.abs(
+                      <Typography sx={{ fontFamily: "Kanit", visibility : loading ? "hidden" : "visible" }}>
+                        {coin?.item?.data?.price_change_percentage_24h?.usd >= 0
+                          ? "▲"
+                          : "▼"}{" "}
+                        ${Math.abs(
                           coin?.item?.data?.price_change_percentage_24h?.usd
-                        ).toFixed(2)}
-                        %
+                        ).toFixed(2)}%
                       </Typography>
                     </Box>
                   </Box>

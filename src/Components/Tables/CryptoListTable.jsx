@@ -12,9 +12,13 @@ import {
   useTheme,
   Avatar,
   Pagination,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import axios from "axios";
+import { Sparklines, SparklinesLine } from "react-sparklines";
+import { HelpOutlineOutlined } from "@mui/icons-material";
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   background: "rgba(255, 255, 255, 0.02)",
@@ -46,13 +50,6 @@ const CryptoListTable = () => {
     fetchCryptoData(currentPage);
   }, [currentPage]);
 
-  //loading
-  useEffect(() => {
-    setTimeout(() => {
-      setFetchingLoading(false);
-    }, 3000);
-  }, []);
-
   //refresh the data aagain every 1 minute?
   useEffect(() => {
     let refreshData = setInterval(() => {
@@ -66,7 +63,7 @@ const CryptoListTable = () => {
 
   const fetchCryptoData = async (page) => {
     try {
-      // guard condition caching, check natin if may prev loaded data na para hindi na natin siya ifetch ulit
+      // guard condition check if page is already cached
       if (pageCache[page]) {
         return pageCache[page];
       }
@@ -84,13 +81,13 @@ const CryptoListTable = () => {
       if (fetchCryptoResponse?.data?.Data?.LIST) {
         setFetchingLoading(false);
 
-        // meron kasing coin na nirereturn na hindi naman dapat nandito, kaya finifilter ko siya
         const coinList = fetchCryptoResponse?.data?.Data?.LIST.filter(
           (coin) => coin?.SYMBOL !== "USD"
         ).map((coin) => ({
           ...coin,
         }));
 
+        // caching para hindi na mag render ulit
         setPageCache((prev) => ({
           ...prev,
           [page]: coinList,
@@ -150,33 +147,162 @@ const CryptoListTable = () => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                    #
+                    <Typography
+                      sx={{
+                        fontFamily: "Kanit",
+                        color: "#fff",
+                        paddingY: "1vh",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      #
+                    </Typography>
                   </TableCell>
                   <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                    Coin
+                    <Typography
+                      sx={{
+                        fontFamily: "Kanit",
+                        color: "#fff",
+                        paddingY: "1vh",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      Coin
+                    </Typography>
                   </TableCell>
                   <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                    Price
+                    <Typography
+                      sx={{
+                        fontFamily: "Kanit",
+                        color: "#fff",
+                        paddingY: "1vh",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      Price
+                    </Typography>
                   </TableCell>
                   {!isMobile && (
                     <>
                       <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                        24h
+                        <Typography
+                          sx={{
+                            fontFamily: "Kanit",
+                            color: "#fff",
+                            paddingY: "1vh",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          24h%
+                        </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                        7d
+                        <Typography
+                          sx={{
+                            fontFamily: "Kanit",
+                            color: "#fff",
+                            paddingY: "1vh",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          7d%
+                        </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                        30d
+                        <Typography
+                          sx={{
+                            fontFamily: "Kanit",
+                            color: "#fff",
+                            paddingY: "1vh",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          30d%
+                        </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                        Circulating Supply
+                        <Typography
+                          sx={{
+                            fontFamily: "Kanit",
+                            color: "#fff",
+                            paddingY: "1vh",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          Circulating Supply
+                          <Tooltip
+                            title={
+                              <Typography
+                                sx={{
+                                  fontFamily: "Inter",
+                                  fontSize: 14,
+                                  fontWeight: "medium",
+                                }}
+                              >
+                                According to Coinmarketcap, circulating supply
+                                is the amount of the cryptocurrency coins or
+                                tokens in circulation. It is a fluctuating value
+                                that can increase and/or decrease over time.
+                              </Typography>
+                            }
+                          >
+                            <IconButton
+                              sx={{
+                                marginLeft: 1,
+                                padding: 0,
+                              }}
+                            >
+                              <HelpOutlineOutlined
+                                sx={{ fontSize: "0.95rem", color: "#fff" }}
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        </Typography>
                       </TableCell>
                       <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                        Market Cap
-                      </TableCell>
-                      <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
-                        Last 7 Days
+                        <Typography
+                          sx={{
+                            fontFamily: "Kanit",
+                            color: "#fff",
+                            paddingY: "1vh",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          Market Cap
+                          <Tooltip
+                            title={
+                              <Typography
+                                sx={{
+                                  fontFamily: "Inter",
+                                  fontSize: 14,
+                                  fontWeight: "medium",
+                                }}
+                              >
+                                According to Coinmarketcap, crypto market capitalization (Market Cap) is a simple, straightforward
+                                way of determining how big the token is.
+                              </Typography>
+                            }
+                          >
+                            <IconButton
+                              sx={{
+                                marginLeft: 1,
+                                padding: 0,
+                              }}
+                            >
+                              <HelpOutlineOutlined
+                                sx={{ fontSize: "0.95rem", color: "#fff" }}
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        </Typography>
                       </TableCell>
                     </>
                   )}
@@ -291,7 +417,8 @@ const CryptoListTable = () => {
                             .length > 0
                             ? `
                             ${
-                              coin?.SPOT_MOVING_30_DAY_CHANGE_PERCENTAGE_USD >= 0
+                              coin?.SPOT_MOVING_30_DAY_CHANGE_PERCENTAGE_USD >=
+                              0
                                 ? "▲"
                                 : "▼"
                             }
@@ -313,9 +440,13 @@ const CryptoListTable = () => {
                             ? `$${coin?.TOTAL_MKT_CAP_USD?.toLocaleString()}`
                             : "-"}
                         </TableCell>
-                        <TableCell sx={{ color: "#fff", fontFamily: "Inter" }}>
-                          {/* <SparkLine/> */}
-                        </TableCell>
+                        {/* <TableCell sx={{ color: "#fff", fontFamily: "Inter" }}>
+                          <div style={{ width: "150px", height: "50px" }}>
+                            <Sparklines data={[5, 10, 5, 20]}>
+                              <SparklinesLine color="#2ecc71" />
+                            </Sparklines>
+                          </div>
+                        </TableCell> */}
                       </>
                     )}
                   </TableRow>
@@ -325,6 +456,7 @@ const CryptoListTable = () => {
           </>
         )}
       </StyledTableContainer>
+      {/* PAGINATION */}
       <Box
         sx={{
           display: "flex",

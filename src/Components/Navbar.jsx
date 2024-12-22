@@ -17,7 +17,6 @@ import { Link } from "react-router-dom";
 const pages = [
 
   {pageName: 'Cryptocurrencies', pagePath: '/cryptolist'},
-  {pageName: 'NFT', pagePath: '/nft'},
   {pageName: 'Exchanges', pagePath: '/exchanges'},
   {pageName: 'Learn', pagePath: '/learn'},
   {pageName: 'About Coinalytics', pagePath: '/about'},

@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-} from "@mui/material";
+import { Box, Typography, Paper, Skeleton } from "@mui/material";
 import { styled } from "@mui/system";
 import axios from "axios";
 
@@ -26,7 +22,7 @@ const GlassContainer = styled(Paper)(({ theme }) => ({
 ***************************
 */
 
-const MarketCap = () => {
+const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
   const [totalMarketCap, setTotalMarketCap] = useState(0);
   const [total24hVolume, setTotal24hVolume] = useState(0);
   const [totalMarketCapChange, setTotalMarketCapChange] = useState(0);
@@ -57,6 +53,8 @@ const MarketCap = () => {
       setTotalMarketCap(globalData?.total_market_cap?.usd);
       setTotal24hVolume(globalData?.total_volume?.usd);
       setTotalMarketCapChange(globalData?.market_cap_change_percentage_24h_usd);
+
+      handleGetGlobalMarketCap(await globalData?.total_market_cap?.usd, await globalData?.market_cap_change_percentage_24h_usd);
     } catch (error) {
       console.log(error);
     }
@@ -79,17 +77,26 @@ const MarketCap = () => {
               variant="h6"
               sx={{ color: "#fff", fontFamily: "Kanit" }}
             >
-              Market Cap
+              {loading ? (
+                <Skeleton width={200} height={40} sx={{ bgcolor: "#979a9a" }} />
+              ) : (
+                "Market Cap"
+              )}
             </Typography>
             <Typography
               variant="h6"
-              sx={{ color: "#fff", fontFamily: "Kanit" }}
+              sx={{
+                color: "#fff",
+                fontFamily: "Kanit",
+                visibility: loading ? "hidden" : "visible",
+              }}
             >
-              ${totalMarketCap?.toLocaleString()}{" "}
+              ${totalMarketCap?.toLocaleString()} ${" "}
               <span
                 style={{
                   color: totalMarketCapChange >= 0 ? "#2ecc71" : "#cb4335",
                   fontSize: 16,
+                  visibility: loading ? "hidden" : "visible",
                 }}
               >
                 {totalMarketCapChange >= 0 ? "▲" : "▼"}
@@ -114,11 +121,19 @@ const MarketCap = () => {
               variant="h6"
               sx={{ color: "#fff", fontFamily: "Kanit" }}
             >
-              24h Trading Volume
+              {loading ? (
+                <Skeleton width={200} height={40} sx={{ bgcolor: "#979a9a" }} />
+              ) : (
+                "24h Trading Volume"
+              )}
             </Typography>
             <Typography
               variant="h6"
-              sx={{ color: "#fff", fontFamily: "Kanit" }}
+              sx={{
+                color: "#fff",
+                fontFamily: "Kanit",
+                visibility: loading ? "hidden" : "visible",
+              }}
             >
               ${total24hVolume?.toLocaleString()}
             </Typography>

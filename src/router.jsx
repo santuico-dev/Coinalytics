@@ -5,7 +5,6 @@ import ViewCryptoInformation from "./Pages/ViewCryptoInformation";
 import NotFound from "./ErrorPage/NotFound";
 import About from "./Pages/About";
 import Learn from "./Pages/Learn";
-import NFT from "./Pages/NFT";
 import Exchanges from "./Pages/Exchanges";
 
 const router = createBrowserRouter([
@@ -36,11 +35,6 @@ const router = createBrowserRouter([
       {
         path: '/learn',
         element: <Learn/>
-      },
-
-      {
-        path: '/nft',
-        element: <NFT/>
       },
       
       {

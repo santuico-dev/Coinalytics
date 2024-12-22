@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  Grid,
-} from "@mui/material";
+import { Box, Container, Typography, Grid } from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import Navbar from "../Components/Navbar";
 import CryptoListTable from "../Components/Tables/CryptoListTable";
-import axios from "axios";
 import TrendingCoins from "../Components/Boxes/TrendingCoins";
 import MarketCap from "../Components/Boxes/MarketCap";
 import FearGreedMeter from "../Components/Boxes/FearGreedMeter";
@@ -115,14 +108,31 @@ const AnimatedBackground = () => {
   );
 };
 
-/*
-***************************
-  FETCHING  
-***************************
-*/
-
 const CryptoHome = () => {
+  const [loading, setLoading] = useState(false);
+  const [totalGlobalMarketCap, setTotalGlobalMarketCap] = useState(0);
+  const [marketCap24hChange, setMarketCap24hChange] = useState(0);
 
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+  const handleGetGlobalMarketCap = (
+    globalMarketCap,
+    globalMarketCap24hChange
+  ) => {
+    try {
+      setTotalGlobalMarketCap(globalMarketCap);
+      setMarketCap24hChange(globalMarketCap24hChange);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //TODO: To Filters, Search Bar, converter, and more
   return (
     <div>
       <Navbar />
@@ -139,26 +149,46 @@ const CryptoHome = () => {
             sx={{
               color: "#fff",
               fontWeight: "500",
+              fontFamily: "Kanit",
+            }}
+          >
+            Crypto Market Overview by Market cap
+          </Typography>
+          <Typography
+            component="h6"
+            gutterBottom
+            sx={{
+              color: "#ccc",
+              fontWeight: "500",
               mb: 4,
               fontFamily: "Kanit",
             }}
           >
-            Cyrpto Market by Market Cap
+            The global cryptocurrency market cap today is $
+            {(totalGlobalMarketCap / 1e12).toFixed(2)} Trillion, a {" "}
+            <span
+              style={{ color: marketCap24hChange >= 0 ? "#2ecc71" : "#cb4335" }}
+            >
+              {marketCap24hChange >= 0 ? "▲" : "▼"} {marketCap24hChange?.toFixed(2)}%
+            </span> change in the last 24 hours.
           </Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
             {/* MARKET CAP & 24 HR VOLUME */}
             <Grid item xs={12} md={4}>
-              <MarketCap/>
+              <MarketCap
+                loading={loading}
+                handleGetGlobalMarketCap={handleGetGlobalMarketCap}
+              />
             </Grid>
 
             {/* TRENDING COINS */}
             <Grid item xs={12} md={4}>
-              <TrendingCoins/>
+              <TrendingCoins loading={loading} />
             </Grid>
 
             {/* FEAR GREED METER */}
             <Grid item xs={12} md={4}>
-              <FearGreedMeter/>
+              <FearGreedMeter loading={loading} />
             </Grid>
           </Grid>
           {/* CRYTPO TABLE */}

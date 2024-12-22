@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-} from "@mui/material";
-import { styled} from "@mui/system";
+import { Box, Typography, Paper, Skeleton } from "@mui/material";
+import { styled } from "@mui/system";
 import axios from "axios";
 import GaugeComponent from "react-gauge-component";
 import { Speed } from "@mui/icons-material";
@@ -28,7 +24,7 @@ const GlassContainer = styled(Paper)(({ theme }) => ({
 ***************************
 */
 
-const FearGreedMeter = () => {
+const FearGreedMeter = ({ loading }) => {
   const [
     fearGreedIndexValueClassification,
     setFearGreedIndexValueClassification,
@@ -78,9 +74,22 @@ const FearGreedMeter = () => {
             gap: 1,
           }}
         >
-          <Speed size={24} />
+          {loading ? (
+            <Skeleton
+              variant="circular"
+              width={40}
+              height={40}
+              sx={{ bgcolor: "#979a9a" }}
+            />
+          ) : (
+            <Speed size={24} />
+          )}
           <Typography variant="h6" sx={{ color: "#fff", fontFamily: "Kanit" }}>
-            Fear & Greed Index
+            {loading ? (
+              <Skeleton width={200} height={40} sx={{ bgcolor: "#979a9a" }} />
+            ) : (
+              "Fear & Greed Index"
+            )}
           </Typography>
         </Box>
         <Box
@@ -96,29 +105,38 @@ const FearGreedMeter = () => {
               transformOrigin: "top center",
             }}
           >
-            <GaugeComponent
-              type="semicircle"
-              arc={{
-                colorArray: ["#FF2121", "#00FF15"],
-                padding: 0.02,
-                subArcs: [
-                  {
-                    tooltip: {
-                      text: fearGreedIndexValueClassification,
+            {loading ? (
+              <Skeleton
+                variant="rectangular"
+                width={200}
+                height={150}
+                sx={{ bgcolor: "#979a9a", mt: 2 }}
+              />
+            ) : (
+              <GaugeComponent
+                type="semicircle"
+                arc={{
+                  colorArray: ["#FF2121", "#00FF15"],
+                  padding: 0.02,
+                  subArcs: [
+                    {
+                      tooltip: {
+                        text: fearGreedIndexValueClassification,
+                      },
                     },
-                  },
-                  {},
-                  {},
-                  {},
-                  {},
-                  {},
-                  {},
-                  {},
-                ],
-              }}
-              pointer={{ type: "blob", animationDelay: 0 }}
-              value={fearGreedValue}
-            />
+                    {},
+                    {},
+                    {},
+                    {},
+                    {},
+                    {},
+                    {},
+                  ],
+                }}
+                pointer={{ type: "blob", animationDelay: 0 }}
+                value={fearGreedValue}
+              />
+            )}
           </Box>
         </Box>
         <Box
@@ -129,7 +147,7 @@ const FearGreedMeter = () => {
             mt: -4,
           }}
         >
-          <Typography variant="h6" sx={{ color: "#fff", fontFamily: "Kanit" }}>
+          <Typography variant="h6" sx={{ color: "#fff", fontFamily: "Kanit", visibility: loading ? "hidden" : "visible" }}>
             {fearGreedIndexValueClassification}
           </Typography>
         </Box>
