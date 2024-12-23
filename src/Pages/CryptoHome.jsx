@@ -6,6 +6,7 @@ import CryptoListTable from "../Components/Tables/CryptoListTable";
 import TrendingCoins from "../Components/Boxes/TrendingCoins";
 import MarketCap from "../Components/Boxes/MarketCap";
 import FearGreedMeter from "../Components/Boxes/FearGreedMeter";
+import { useNavValueContext } from "../Context/NavValueContext";
 
 /*
 ***************************
@@ -109,9 +110,18 @@ const AnimatedBackground = () => {
 };
 
 const CryptoHome = () => {
+
   const [loading, setLoading] = useState(false);
   const [totalGlobalMarketCap, setTotalGlobalMarketCap] = useState(0);
   const [marketCap24hChange, setMarketCap24hChange] = useState(0);
+  const [total24hVolume, setTotal24hVolume] = useState(0);
+  const [totalGlobalCoins, setTotalGlobalCoins] = useState(0);
+  const [totalGlobalExchanges, setTotalGlobalExchanges] = useState(0);
+
+  const [top2DominantCoins, setTop2DominantCoins] = useState([]);
+  const [top2DominantCoinsPercentage, setTop2DominantCoinsPercentage] = useState([]);
+
+  const { setTotalMarketCap, setTotalMarketCapChange, setTotal24hrsVolume, setTotal24hrsVolumeChange, setTotalCoins, setTotalExchanges, set2DominantCoins, setTop2DominantCoinsChange } = useNavValueContext();
 
   useEffect(() => {
     setLoading(true);
@@ -122,11 +132,33 @@ const CryptoHome = () => {
 
   const handleGetGlobalMarketCap = (
     globalMarketCap,
-    globalMarketCap24hChange
+    globalMarketCap24hChange,
+    global24hVolume,
+    globalTotalCoins,
+    globalTotalExchanges,
+    top2DominantCoins,
+    top2DominantCoinsPercentage
   ) => {
     try {
       setTotalGlobalMarketCap(globalMarketCap);
       setMarketCap24hChange(globalMarketCap24hChange);
+      setTotal24hVolume(global24hVolume);
+      setTotalGlobalCoins(globalTotalCoins);
+      setTotalGlobalExchanges(globalTotalExchanges);
+
+      setTop2DominantCoins(top2DominantCoins);
+      setTop2DominantCoinsPercentage(top2DominantCoinsPercentage);
+
+      //save to context so we can use it in other jsx files
+      setTotalMarketCap(globalMarketCap);
+      setTotalMarketCapChange(globalMarketCap24hChange);
+      setTotal24hrsVolume(global24hVolume);
+      setTotal24hrsVolumeChange(globalMarketCap24hChange);
+      setTotalCoins(globalTotalCoins);
+      setTotalExchanges(globalTotalExchanges);
+      set2DominantCoins(top2DominantCoins);
+      setTop2DominantCoinsChange(top2DominantCoinsPercentage);
+      
     } catch (error) {
       console.log(error);
     }
@@ -135,7 +167,15 @@ const CryptoHome = () => {
   //TODO: To Filters, Search Bar, converter, and more
   return (
     <div>
-      <Navbar />
+      <Navbar 
+        totalMarketCap={totalGlobalMarketCap} 
+        total24hVolume={total24hVolume} 
+        marketCapChange={marketCap24hChange} 
+        totalCoins={totalGlobalCoins} 
+        totalExchanges={totalGlobalExchanges}
+        top2DominantCoins={top2DominantCoins}
+        top2DominantCoinsChange={top2DominantCoinsPercentage}
+      />
       <StyledBox>
         <AnimatedBackground />
         <Container

@@ -54,7 +54,18 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
       setTotal24hVolume(globalData?.total_volume?.usd);
       setTotalMarketCapChange(globalData?.market_cap_change_percentage_24h_usd);
 
-      handleGetGlobalMarketCap(await globalData?.total_market_cap?.usd, await globalData?.market_cap_change_percentage_24h_usd);
+      const top2DominantCoins = Object.keys(globalData?.market_cap_percentage).slice(0, 2).sort((a, b) => b - a) || [];
+      const top2DominantCoinsPercentage = Object.values(globalData?.market_cap_percentage).slice(0, 2).sort((a, b) => b - a) || [];
+
+      handleGetGlobalMarketCap(
+        globalData?.total_market_cap?.usd, //-Josh total market cap in usd
+        globalData?.market_cap_change_percentage_24h_usd, //-Josh percentae chnage of the total global market cap
+        globalData?.total_volume?.usd, //-Josh total 24h trading volume
+        globalData?.active_cryptocurrencies, //-Josh total tokens
+        globalData?.markets, //-Josh exchanges
+        top2DominantCoins, //-Josh top 2 dominant coins
+        top2DominantCoinsPercentage //-Josh top 2 dominanct coins percentage
+      );
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +102,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
                 visibility: loading ? "hidden" : "visible",
               }}
             >
-              ${totalMarketCap?.toLocaleString()} ${" "}
+              ${totalMarketCap?.toLocaleString()} {" "}
               <span
                 style={{
                   color: totalMarketCapChange >= 0 ? "#2ecc71" : "#cb4335",

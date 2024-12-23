@@ -3,6 +3,7 @@ import { Box, Container, Typography, Grid } from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import Navbar from "../Components/Navbar";
 import ExchangesTable from "../Components/Tables/ExchangesTable";
+import { useNavValueContext } from "../Context/NavValueContext";
 
 /*
 ***************************
@@ -107,7 +108,11 @@ const AnimatedBackground = () => {
 
 const Exchanges = () => {
 
-  const [topThreeExchanges, setTopThreeExchanges] = useState([]); 
+  //cyrpto exchanges Data
+  const [topThreeExchanges, setTopThreeExchanges] = useState([]);
+
+  //navbar statistics
+  const { totalMarketCap, total24hVolume, totalCoins, totalExchanges, top2DominantCoins, top2DominantCoinsChange, totalMarketCapChange } = useNavValueContext();
 
   const handleTopThreeExchanges = (exchangeName) => {
     try {
@@ -115,11 +120,20 @@ const Exchanges = () => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
 
   return (
     <div>
-      <Navbar />
+      <Navbar 
+        totalMarketCap={totalMarketCap} 
+        total24hVolume={total24hVolume} 
+        marketCapChange={totalMarketCapChange} 
+        totalCoins={totalCoins} 
+        totalExchanges={totalExchanges}
+        top2DominantCoins={top2DominantCoins}
+        top2DominantCoinsChange={top2DominantCoinsChange}
+      />
       <StyledBox>
         <AnimatedBackground />
         <Container
@@ -148,8 +162,13 @@ const Exchanges = () => {
               fontFamily: "Kanit",
             }}
           >
-            {topThreeExchanges.length > 0 ? `As of today, we track 218 crypto exchanges (CEX). Currently, the 3 largest cryptocurrency exchanges are ${topThreeExchanges[0]}, ${topThreeExchanges[1]}, and ${topThreeExchanges[2]}.` : "Loading..."}
-         
+            {topThreeExchanges.length > 0
+              ? `As of today, we track 218 crypto exchanges (CEX). Currently, the 3 largest cryptocurrency exchanges are ${
+                  topThreeExchanges[0] || ""
+                }, ${topThreeExchanges[1] || ""}, and ${
+                  topThreeExchanges[2] || ""
+                }.`
+              : "Loading..."}
           </Typography>
           {/* EXCHANGES TABLE */}
           <ExchangesTable handleTopThreeExchanges={handleTopThreeExchanges} />

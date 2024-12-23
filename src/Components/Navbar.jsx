@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,19 +9,16 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { styled } from "@mui/material/styles";
 import logoPic from "../assets/logo_1.png";
 import { Link } from "react-router-dom";
 
 const pages = [
-
-  {pageName: 'Cryptocurrencies', pagePath: '/cryptolist'},
-  {pageName: 'Exchanges', pagePath: '/exchanges'},
-  {pageName: 'Learn', pagePath: '/learn'},
-  {pageName: 'About Coinalytics', pagePath: '/about'},
-
-]
+  { pageName: "Cryptocurrencies", pagePath: "/cryptolist" },
+  { pageName: "Exchanges", pagePath: "/exchanges" },
+  { pageName: "Learn", pagePath: "/learn" },
+  { pageName: "About Coinalytics", pagePath: "/about" },
+];
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -49,12 +46,33 @@ const NavButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [scrolled, setScrolled] = React.useState(false);
+const StatsTypography = styled(Typography)(({ theme }) => ({
+  fontSize: "0.75rem",
+  fontFamily: "Inter",
+  color: "white",
+  marginBottom: "0.5rem",
+  display: { xs: "none", lg: "block" },
+}));
 
-  React.useEffect(() => {
+const StatsDivider = styled("span")({
+  margin: "0 0.5rem",
+  color: "rgba(255, 255, 255, 0.5)",
+});
+
+function Navbar({
+  totalCoins,
+  totalExchanges,
+  totalMarketCap,
+  total24hVolume,
+  marketCapChange,
+  top2DominantCoins,
+  top2DominantCoinsChange,
+}) {
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 20;
       setScrolled(isScrolled);
@@ -68,10 +86,6 @@ function Navbar() {
     setAnchorElNav(event.currentTarget);
   };
 
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -81,8 +95,48 @@ function Navbar() {
   };
 
   return (
-    <>
-      <StyledAppBar position="fixed" scrolled={scrolled ? 1 : 0}>
+    <Box>
+      {/* Market Statistics */}
+      <Box
+        sx={{
+          width: "100%",
+          background: "rgba(0, 0, 0, 0.7)",
+          backdropFilter: "blur(10px)",
+          padding: "0.5rem 0",
+          position: "fixed",
+          top: 0,
+          zIndex: 1200,
+        }}
+      >
+        <Container maxWidth="xl">
+          <StatsTypography>
+            Coins: <span style={{ color: "#ccc" }}>{totalCoins?.toLocaleString()}</span>
+            <StatsDivider>|</StatsDivider>
+            Exchanges: <span style={{ color: "#ccc" }}>{totalExchanges?.toLocaleString()}</span>
+            <StatsDivider>|</StatsDivider>
+            Market Cap: <span style={{ color: "#ccc" }}>${(totalMarketCap / 1e12)?.toFixed(2)}T</span> {" "}
+            <span
+              style={{ color: marketCapChange >= 0 ? "#2ecc71" : "#cb4335" }}
+            >
+              {marketCapChange >= 0 ? "▲" : "▼"}
+              {marketCapChange?.toFixed(2)}%
+            </span>
+            <StatsDivider>|</StatsDivider>
+            24h Vol: <span style={{ color: "#ccc" }}>${(total24hVolume / 1e9)?.toFixed(2)}B</span> 
+            <StatsDivider>|</StatsDivider>
+            {/* -JOSH  top2DominantCoins[0] - BTC 
+            top2DominantCoins[1] - ETH*/}
+            Dominance: {top2DominantCoins[0]?.toUpperCase()} <span style={{ color: "#ccc" }}>{top2DominantCoinsChange[0]?.toFixed(2)}%</span> 
+            {" "}
+            | {top2DominantCoins[1]?.toUpperCase()} <span style={{ color: "#ccc" }}>{top2DominantCoinsChange[1]?.toFixed(2)}%</span>
+          </StatsTypography>
+        </Container>
+      </Box>
+      <StyledAppBar
+        position="fixed"
+        scrolled={scrolled ? 1 : 0}
+        sx={{ top: { lg: "32px" } }}
+      >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Box
@@ -126,8 +180,8 @@ function Navbar() {
                 {pages.map((page, index) => (
                   <MenuItem
                     key={index}
-                    component = {Link}
-                    to = {page.pagePath}
+                    component={Link}
+                    to={page.pagePath}
                     sx={{ color: "white" }}
                   >
                     <Typography
@@ -148,14 +202,15 @@ function Navbar() {
               {pages.map((page, index) => (
                 <NavButton
                   key={index}
-                  component = {Link}
-                  to = {page.pagePath}
+                  component={Link}
+                  to={page.pagePath}
                   sx={{ fontFamily: "Kanit" }}
                 >
                   {page.pageName}
                 </NavButton>
               ))}
             </Box>
+
             <Box sx={{ flexGrow: 0 }}>
               <Menu
                 sx={{
@@ -197,7 +252,7 @@ function Navbar() {
           </Toolbar>
         </Container>
       </StyledAppBar>
-    </>
+    </Box>
   );
 }
 

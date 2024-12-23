@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Container, Typography, Grid } from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import Navbar from "../Components/Navbar";
+import { useNavValueContext } from "../Context/NavValueContext";
+
 /*
 ***************************
   ANIMATIONS  
@@ -106,6 +108,17 @@ const AnimatedBackground = () => {
 const About = () => {
   const [loading, setLoading] = useState(false);
 
+  //navbar statistics
+  const {
+    totalMarketCap,
+    total24hVolume,
+    totalCoins,
+    totalExchanges,
+    top2DominantCoins,
+    top2DominantCoinsChange,
+    totalMarketCapChange,
+  } = useNavValueContext();
+
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -115,7 +128,15 @@ const About = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar
+        totalMarketCap={totalMarketCap}
+        total24hVolume={total24hVolume}
+        marketCapChange={totalMarketCapChange}
+        totalCoins={totalCoins}
+        totalExchanges={totalExchanges}
+        top2DominantCoins={top2DominantCoins}
+        top2DominantCoinsChange={top2DominantCoinsChange}
+      />
       <StyledBox>
         <AnimatedBackground />
         <Container
