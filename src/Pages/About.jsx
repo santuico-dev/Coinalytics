@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Box, Container, Typography, Grid } from "@mui/material";
-import { styled, keyframes } from "@mui/system";
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Divider,
+  Paper,
+} from "@mui/material";
+import { keyframes, styled } from "@mui/system";
 import Navbar from "../Components/Navbar";
 import { useNavValueContext } from "../Context/NavValueContext";
+import about_pic_1 from "../assets/about_pic_1.png";
+import about_pic_2 from "../assets/about_pic_3.png";
+import Footer from "../Components/Footer";
+import { AutoAwesome, Code, TipsAndUpdates } from "@mui/icons-material";
+import ScrollToTop from "../Components/ScrollToTop";
 
 /*
 ***************************
-  ANIMATIONS  
+  ABOUT COINALYTICS
 ***************************
 */
+
+// ANIMATIONS
 
 const rotateAndFade = keyframes`
   0% {
@@ -68,16 +82,6 @@ const FloatingSquare = styled("div")(
   })
 );
 
-const StyledBox = styled(Box)({
-  minHeight: "100vh",
-  background: "linear-gradient(135deg, #000000, #0a0a0a, #111111)",
-  position: "relative",
-  padding: "2rem 0",
-  "& *": {
-    fontFamily: "Kanit, sans-serif",
-  },
-});
-
 const AnimatedBackground = () => {
   const dustParticles = Array.from({ length: 50 }, (_, i) => ({
     size: Math.random() * 3 + 1,
@@ -105,10 +109,49 @@ const AnimatedBackground = () => {
   );
 };
 
+const StyledBox = styled(Box)({
+  minHeight: "100vh",
+  background: "linear-gradient(135deg, #000000, #0a0a0a, #111111)",
+  position: "relative",
+  padding: "2rem 0",
+  "& *": {
+    fontFamily: "Kanit, sans-serif",
+  },
+});
+
+const MainContainer = styled(Box)({
+  padding: "2rem",
+  background: "transparent",
+  backdropFilter: "blur(10px)",
+  marginBottom: "2rem",
+});
+
+const StyledImage = styled("img")({
+  width: "100%",
+  height: "400px",
+  objectFit: "cover",
+  objectPosition: "center",
+  borderRadius: "16px",
+});
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  background: "rgba(255, 255, 255, 0.05)",
+  backdropFilter: "blur(10px)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: theme.spacing(2),
+  height: "100%",
+  color: "#ffffff",
+  transition: "transform 0.3s ease-in-out",
+  "&:hover": {
+    transform: "translateY(-5px)",
+    background: "rgba(255, 255, 255, 0.08)",
+  },
+}));
+
 const About = () => {
   const [loading, setLoading] = useState(false);
 
-  //navbar statistics
   const {
     totalMarketCap,
     total24hVolume,
@@ -120,6 +163,7 @@ const About = () => {
   } = useNavValueContext();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -141,7 +185,7 @@ const About = () => {
         <AnimatedBackground />
         <Container
           maxWidth="xl"
-          sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 10 } }}
+          sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 15 } }}
         >
           <Typography
             variant="h4"
@@ -155,8 +199,137 @@ const About = () => {
           >
             About Coinalytics
           </Typography>
+
+          <Divider
+            sx={{
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              margin: "1.5rem 0",
+            }}
+          />
+
+          <MainContainer>
+            {/* First Section */}
+            <Grid container spacing={4} alignItems="center" sx={{ mb: 4 }}>
+              <Grid item xs={12} md={6}>
+                <StyledPaper>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 3,
+                    }}
+                  >
+                    <AutoAwesome
+                      sx={{
+                        mr: 1.6,
+                        color: "#ffffff",
+                        fontSize: { xs: "1.5rem", md: "2rem" },
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        color: "#fff",
+                        fontWeight: "bold",
+                        fontFamily: "Inter",
+                        fontSize: { xs: "1.5rem", md: "1.7rem" },
+                      }}
+                    >
+                      What is Coinalytics
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "1.1rem",
+                      lineHeight: 1.8,
+                    }}
+                  >
+                    Coinalytics is a simple cryptocurrency analysis website that
+                    provides essential information about different
+                    cryptocurrencies circulating the market. It is designed to
+                    help users make informed decisions about their investments
+                    or view the latest news about the cryptocurrency market.
+                  </Typography>
+                </StyledPaper>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <StyledImage src={about_pic_1} alt="Cryptocurrency Analysis" />
+                <Typography
+                  align="center"
+                  sx={{
+                    color: "rgba(255, 255, 255, 0.5)",
+                    fontSize: "0.8rem",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  https://www.bitwave.io/blog/converting-cryptocurrency-to-a-stablecoin-is-taxable-3-scenarios
+                </Typography>
+              </Grid>
+            </Grid>
+
+            {/* Second Section */}
+            <Grid container spacing={4} alignItems="center">
+              <Grid item xs={12} md={6}>
+                <StyledImage src={about_pic_2} alt="Our Mission" />
+                <Typography
+                  align="center"
+                  sx={{
+                    color: "rgba(255, 255, 255, 0.5)",
+                    fontSize: "0.8rem",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  https://www.pymnts.com/blockchain/bitcoin/2021/crypto-market-tops-1-trillion-as-bitcoin-smashes-records/
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <StyledPaper>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 3,
+                    }}
+                  >
+                    <TipsAndUpdates
+                      sx={{
+                        mr: 1.6,
+                        color: "#ffffff",
+                        fontSize: { xs: "1.5rem", md: "2rem" },
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        color: "#fff",
+                        fontWeight: "bold",
+                        fontFamily: "Inter",
+                        fontSize: { xs: "1.5rem", md: "1.7rem" },
+                      }}
+                    >
+                      Project Mission
+                    </Typography>
+                  </Box>
+                  <Typography
+                    sx={{
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "1.1rem",
+                      lineHeight: 1.8,
+                    }}
+                  >
+                    Coinalytics is a simple cryptocurrency analysis website that
+                    provides essential information about different
+                    cryptocurrencies circulating the market. It is designed to
+                    help users make informed decisions about their investments
+                    or view the latest news about the cryptocurrency market.
+                  </Typography>
+                </StyledPaper>
+              </Grid>
+            </Grid>
+          </MainContainer>
         </Container>
       </StyledBox>
+      <ScrollToTop/>
+      <Footer />
     </div>
   );
 };

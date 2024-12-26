@@ -67,7 +67,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
         top2DominantCoinsPercentage //-Josh top 2 dominanct coins percentage
       );
     } catch (error) {
-      console.log(error);
+      console.log("Rate Limit Error");
     }
   };
   return (
@@ -102,16 +102,16 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
                 visibility: loading ? "hidden" : "visible",
               }}
             >
-              ${totalMarketCap?.toLocaleString()} {" "}
+              ${totalMarketCap === 0 ? parseFloat(localStorage.getItem("totalMarketCap")).toLocaleString() : totalMarketCap?.toLocaleString()} {" "}
               <span
                 style={{
-                  color: totalMarketCapChange >= 0 ? "#2ecc71" : "#cb4335",
+                  color: parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "#2ecc71" : "#cb4335",
                   fontSize: 16,
                   visibility: loading ? "hidden" : "visible",
                 }}
               >
-                {totalMarketCapChange >= 0 ? "▲" : "▼"}
-                {totalMarketCapChange.toFixed(2)}%
+                {parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "▲" : "▼"}
+                {parseFloat(localStorage.getItem("totalMarketCapChange")).toFixed(2)}%
               </span>
             </Typography>
           </Box>
@@ -146,7 +146,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
                 visibility: loading ? "hidden" : "visible",
               }}
             >
-              ${total24hVolume?.toLocaleString()}
+              ${total24hVolume === 0 ? parseFloat(localStorage.getItem("total24hVolume")) : total24hVolume?.toLocaleString()}
             </Typography>
           </Box>
         </Box>

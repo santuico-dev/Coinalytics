@@ -7,6 +7,8 @@ import TrendingCoins from "../Components/Boxes/TrendingCoins";
 import MarketCap from "../Components/Boxes/MarketCap";
 import FearGreedMeter from "../Components/Boxes/FearGreedMeter";
 import { useNavValueContext } from "../Context/NavValueContext";
+import Footer from "../Components/Footer";
+import ScrollToTop from "../Components/ScrollToTop";
 
 /*
 ***************************
@@ -124,6 +126,7 @@ const CryptoHome = () => {
   const { setTotalMarketCap, setTotalMarketCapChange, setTotal24hrsVolume, setTotal24hrsVolumeChange, setTotalCoins, setTotalExchanges, set2DominantCoins, setTop2DominantCoinsChange } = useNavValueContext();
 
   useEffect(() => {
+    window.scroll(0, 0);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -180,7 +183,7 @@ const CryptoHome = () => {
         <AnimatedBackground />
         <Container
           maxWidth="xl"
-          sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 10 } }}
+          sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 14 } }}
         >
           <Typography
             variant="h4"
@@ -205,11 +208,11 @@ const CryptoHome = () => {
             }}
           >
             The global cryptocurrency market cap today is $
-            {(totalGlobalMarketCap / 1e12).toFixed(2)} Trillion, a {" "}
+            {totalGlobalMarketCap === 0 ? parseFloat(localStorage.getItem("totalMarketCap") / 1e12)?.toFixed(2) : (totalGlobalMarketCap / 1e12).toFixed(2)} Trillion, a {" "}
             <span
-              style={{ color: marketCap24hChange >= 0 ? "#2ecc71" : "#cb4335" }}
+              style={{ color: parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "#2ecc71" : "#cb4335" }}
             >
-              {marketCap24hChange >= 0 ? "▲" : "▼"} {marketCap24hChange?.toFixed(2)}%
+              {parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "▲" : "▼"} {parseFloat(localStorage.getItem("totalMarketCapChange"))?.toFixed(2)}%
             </span> change in the last 24 hours.
           </Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -235,6 +238,8 @@ const CryptoHome = () => {
           <CryptoListTable />
         </Container>
       </StyledBox>
+      <ScrollToTop/>
+      <Footer/>
     </div>
   );
 };

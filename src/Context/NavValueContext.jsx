@@ -22,14 +22,70 @@ const StateContext = createContext({
 });
 
 export const NavValueContext = ({children}) => {
-    const [totalMarketCap, setTotalMarketCap] = useState(0);
-    const [total24hVolume, setTotal24hrsVolume] = useState(0);
-    const [totalCoins, setTotalCoins] = useState(0);
-    const [totalExchanges, setTotalExchanges] = useState(0);
-    const [top2DominantCoins, set2DominantCoins] = useState([]);
-    const [top2DominantCoinsChange, setTop2DominantCoinsChange] = useState([]);
-    const [totalMarketCapChange, setTotalMarketCapChange] = useState(0);
-    const [total24hrsVolumeChange, setTotal24hrsVolumeChange] = useState(0);
+    const [totalMarketCap, _setTotalMarketCap] = useState(0);
+    const [total24hVolume, _setTotal24hrsVolume] = useState(0);
+    const [totalCoins, _setTotalCoins] = useState(0);
+    const [totalExchanges, _setTotalExchanges] = useState(0);
+    const [top2DominantCoins, _set2DominantCoins] = useState([]);
+    const [top2DominantCoinsChange, _setTop2DominantCoinsChange] = useState([]);
+    const [totalMarketCapChange, _setTotalMarketCapChange] = useState(0);
+    const [total24hrsVolumeChange, _setTotal24hrsVolumeChange] = useState(0);
+
+    const setTotalMarketCap = (marketCap) => {
+        if (marketCap) {
+            _setTotalMarketCap(marketCap);
+            localStorage.setItem("totalMarketCap", marketCap);
+        }
+    }
+
+    const setTotal24hrsVolume = (volume) => {
+        if (volume) {
+            _setTotal24hrsVolume(volume);
+            localStorage.setItem("total24hVolume", volume);
+        }
+    }
+
+    const setTotalCoins = (coins) => {
+        if (coins) {
+            _setTotalCoins(coins);
+            localStorage.setItem("totalCoins", coins);
+        }
+    }
+
+    const setTotalExchanges = (exchanges) => {
+        if (exchanges) {
+            _setTotalExchanges(exchanges);
+            localStorage.setItem("totalExchanges", exchanges);
+        }
+    }
+    
+    const set2DominantCoins = (coins) => {
+        if (coins) {
+            _set2DominantCoins(coins);
+            localStorage.setItem("top2DominantCoins", JSON.stringify(coins));
+        }
+    }
+
+    const setTop2DominantCoinsChange = (coinsChange) => {
+        if (coinsChange) {
+            _setTop2DominantCoinsChange(coinsChange);
+            localStorage.setItem("top2DominantCoinsChange", JSON.stringify(coinsChange));
+        }
+    }
+
+    const setTotalMarketCapChange = (marketCapChange) => {
+        if (marketCapChange) {
+            _setTotalMarketCapChange(marketCapChange);
+            localStorage.setItem("totalMarketCapChange", marketCapChange);
+        }
+    }
+
+    const setTotal24hrsVolumeChange = (volumeChange) => {
+        if (volumeChange) {
+            _setTotal24hrsVolumeChange(volumeChange);
+            localStorage.setItem("total24hrsVolumeChange", volumeChange);
+        }
+    }
 
     return (
         <StateContext.Provider

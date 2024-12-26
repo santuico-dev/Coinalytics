@@ -145,6 +145,7 @@ const CryptoListTable = () => {
   return (
     <div>
       <MainContainer maxWidth="xl">
+        {/* SEARCH FIELD */}
         <Box sx={{ width: "100%" }}>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <TextField
@@ -188,6 +189,7 @@ const CryptoListTable = () => {
               }}
             />
           </Box>
+
           <StyledTableContainer>
             {fetchingLoading ? (
               <Typography
@@ -554,6 +556,7 @@ const CryptoListTable = () => {
               onChange={(event, page) => {
                 setCurrentPage(page);
               }}
+              disabled = {fetchingLoading}
               variant="outlined"
               showFirstButton
               showLastButton

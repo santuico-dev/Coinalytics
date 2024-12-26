@@ -138,6 +138,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
     <div>
       <MainContainer maxWidth="xl">
         <Box sx={{ width: "100%" }}>
+          {/* SEARCH FIELD */}
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <TextField
               fullWidth
@@ -180,6 +181,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
               }}
             />
           </Box>
+
           <StyledTableContainer>
             {fetchingLoading ? (
               <Typography
@@ -418,6 +420,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
               onChange={(event, page) => {
                 setCurrentPage(page);
               }}
+              disabled = {fetchingLoading}
               variant="outlined"
               showFirstButton
               showLastButton

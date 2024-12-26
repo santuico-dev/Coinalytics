@@ -195,7 +195,7 @@ const TrendingCoins = ({ loading }) => {
                         {coin?.item?.data?.price_change_percentage_24h?.usd >= 0
                           ? "▲"
                           : "▼"}{" "}
-                        ${Math.abs(
+                        {Math.abs(
                           coin?.item?.data?.price_change_percentage_24h?.usd
                         ).toFixed(2)}%
                       </Typography>

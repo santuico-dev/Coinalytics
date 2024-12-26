@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Container, Typography, Grid } from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import Navbar from "../Components/Navbar";
@@ -108,6 +108,10 @@ const AnimatedBackground = () => {
 
 const Exchanges = () => {
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [])
+
   //cyrpto exchanges Data
   const [topThreeExchanges, setTopThreeExchanges] = useState([]);
 
@@ -121,7 +125,6 @@ const Exchanges = () => {
       console.log(error);
     }
   };
-
 
   return (
     <div>
@@ -138,7 +141,7 @@ const Exchanges = () => {
         <AnimatedBackground />
         <Container
           maxWidth="xl"
-          sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 10 } }}
+          sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 14 } }}
         >
           <Typography
             variant="h4"

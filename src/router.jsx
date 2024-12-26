@@ -36,6 +36,11 @@ const router = createBrowserRouter([
         path: '/learn',
         element: <Learn/>
       },
+
+      {
+        path: '/learn/:sectionID/:subSectionName',
+        element: <Learn/>
+      },
       
       {
         path: '/exchanges',
