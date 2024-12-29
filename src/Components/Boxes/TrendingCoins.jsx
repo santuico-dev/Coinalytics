@@ -177,7 +177,7 @@ const TrendingCoins = ({ loading }) => {
                         visibility: loading ? "hidden" : "visible",
                       }}
                     >
-                      ${coin?.item?.price_btc.toFixed(8)}
+                      ${coin?.item?.data?.price?.toFixed(2)}
                     </Typography>
                     <Box
                       sx={{

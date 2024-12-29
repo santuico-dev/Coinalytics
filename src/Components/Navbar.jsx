@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import logoPic from "../assets/logo_1.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const pages = [
   { pageName: "Cryptocurrencies", pagePath: "/cryptolist" },
@@ -72,6 +72,8 @@ function Navbar({
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
+  const navigator = useNavigate();
+
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 20;
@@ -94,9 +96,12 @@ function Navbar({
     setAnchorElUser(null);
   };
 
+  const handleOpenNavLink = (navPath) => {
+    navigator(navPath)
+  }
+
   return (
     <Box>
-      {/* Market Statistics */}
       <Box
         sx={{
           width: "100%",
@@ -108,27 +113,28 @@ function Navbar({
           zIndex: 1200,
         }}
       >
+        {/* STATISTACS */}
         <Container maxWidth="xl">
           <StatsTypography>
-            Coins: <span style={{ color: "#ccc" }}>{totalCoins?.toLocaleString()}</span>
+            Coins: <span style={{ color: "#ccc" }}>{parseInt(totalCoins)?.toLocaleString()}</span>
             <StatsDivider>|</StatsDivider>
-            Exchanges: <span style={{ color: "#ccc" }}>{totalExchanges?.toLocaleString()}</span>
+            Exchanges: <span style={{ color: "#ccc" }}>{parseInt(totalExchanges)?.toLocaleString()}</span>
             <StatsDivider>|</StatsDivider>
-            Market Cap: <span style={{ color: "#ccc" }}>${(totalMarketCap / 1e12)?.toFixed(2)}T</span> {" "}
+            Market Cap: <span style={{ color: "#ccc" }}>${(parseFloat(totalMarketCap) / 1e12)?.toFixed(2)}T</span> {" "}
             <span
-              style={{ color: marketCapChange >= 0 ? "#2ecc71" : "#cb4335" }}
+              style={{ color: parseFloat(marketCapChange) >= 0 ? "#2ecc71" : "#cb4335" }}
             >
-              {marketCapChange >= 0 ? "▲" : "▼"}
-              {marketCapChange?.toFixed(2)}%
+              {parseFloat(marketCapChange) >= 0 ? "▲" : "▼"}
+              {parseFloat(marketCapChange)?.toFixed(2)}%
             </span>
             <StatsDivider>|</StatsDivider>
-            24h Vol: <span style={{ color: "#ccc" }}>${(total24hVolume / 1e9)?.toFixed(2)}B</span> 
+            24h Vol: <span style={{ color: "#ccc" }}>${(parseFloat(total24hVolume) / 1e9)?.toFixed(2)}B</span> 
             <StatsDivider>|</StatsDivider>
             {/* -JOSH  top2DominantCoins[0] - BTC 
             top2DominantCoins[1] - ETH*/}
-            Dominance: {top2DominantCoins[0]?.toUpperCase()} <span style={{ color: "#ccc" }}>{top2DominantCoinsChange[0]?.toFixed(2)}%</span> 
+            Dominance: {top2DominantCoins[0]?.toUpperCase()} <span style={{ color: "#ccc" }}>{parseFloat(top2DominantCoinsChange[0])?.toFixed(2)}%</span> 
             {" "}
-            | {top2DominantCoins[1]?.toUpperCase()} <span style={{ color: "#ccc" }}>{top2DominantCoinsChange[1]?.toFixed(2)}%</span>
+            | {top2DominantCoins[1]?.toUpperCase()} <span style={{ color: "#ccc" }}>{parseFloat(top2DominantCoinsChange[1])?.toFixed(2)}%</span>
           </StatsTypography>
         </Container>
       </Box>
@@ -140,7 +146,8 @@ function Navbar({
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Box
-              sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
+              sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", cursor: 'pointer' }}
+              onClick ={() => navigator('/cryptolist', { replace: true })}
             >
               <LogoImage src={logoPic} alt="logo" />
             </Box>
@@ -180,14 +187,13 @@ function Navbar({
                 {pages.map((page, index) => (
                   <MenuItem
                     key={index}
-                    component={Link}
-                    to={page.pagePath}
+                    onClick={() => handleOpenNavLink(page?.pagePath)}
                     sx={{ color: "white" }}
                   >
                     <Typography
                       sx={{ textAlign: "center", fontFamily: "Kanit" }}
                     >
-                      {page.pageName}
+                      {page?.pageName}
                     </Typography>
                   </MenuItem>
                 ))}
@@ -202,11 +208,10 @@ function Navbar({
               {pages.map((page, index) => (
                 <NavButton
                   key={index}
-                  component={Link}
-                  to={page.pagePath}
+                  onClick={() => handleOpenNavLink(page?.pagePath)}
                   sx={{ fontFamily: "Kanit" }}
                 >
-                  {page.pageName}
+                  {page?.pageName}
                 </NavButton>
               ))}
             </Box>
