@@ -11,7 +11,7 @@ const SparkLine = ({ coinName }) => {
   const fetchPrices = async () => {
     try {
       const coinSparkLinePrice = await axios.get(
-        `https://min-api.cryptocompare.com/data/v2/histohour?fsym=${coinName}&tsym=USD&limit=168`, 
+        ``, 
         {
             cache: true,
             signal: AbortSignal.timeout(8000)

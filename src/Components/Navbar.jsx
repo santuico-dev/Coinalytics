@@ -12,6 +12,9 @@ import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
 import logoPic from "../assets/logo_1.png";
 import { Link, useNavigate } from "react-router-dom";
+import ConversionChangerButton from "./Buttons/ConversionChangerButton";
+import { useConversionContext } from "../Context/ConversionContext";
+import { useSnackbar } from "notistack";
 
 const pages = [
   { pageName: "Cryptocurrencies", pagePath: "/cryptolist" },
@@ -71,6 +74,19 @@ function Navbar({
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [changeConversionValueClickCount, setChangeConversionValueClickCount] = useState(0);
+  const [enableConversionValueButton, setEnableConversionValueButton] = useState(true);
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const {
+    currencySymbol,
+    conversionValue,
+    philippineConversionValue,
+    usdConversionValue,
+    setConversionValue,
+    setCurrencySymbol,
+  } = useConversionContext();
 
   const navigator = useNavigate();
 
@@ -97,8 +113,46 @@ function Navbar({
   };
 
   const handleOpenNavLink = (navPath) => {
-    navigator(navPath)
-  }
+    navigator(navPath);
+  };
+
+  const handleChangeConversionValue = () => {
+
+    setChangeConversionValueClickCount(changeConversionValueClickCount + 1);
+
+    //guard condition to preveng spamming
+    if(changeConversionValueClickCount >= 3) {
+
+      setEnableConversionValueButton(false);
+      enqueueSnackbar("You might want to calm down clicking that buddy.", {
+        autoHideDuration: 6000,
+        variant: 'warning',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        style: {
+          fontFamily: 'Kanit'
+        }
+      });
+
+      setTimeout(() => {
+        setChangeConversionValueClickCount(0);
+        setEnableConversionValueButton(true);
+      }, [6000])
+
+      return;
+    }
+
+    //conversion changer, for now PHP => USD lang muna
+    if (currencySymbol === "$") {
+      setCurrencySymbol("₱");
+      setConversionValue(philippineConversionValue);
+    } else {
+      setCurrencySymbol("$");
+      setConversionValue(usdConversionValue);
+    }    
+  };
 
   return (
     <Box>
@@ -116,25 +170,59 @@ function Navbar({
         {/* STATISTACS */}
         <Container maxWidth="xl">
           <StatsTypography>
-            Coins: <span style={{ color: "#ccc" }}>{parseInt(totalCoins)?.toLocaleString()}</span>
+            Coins:{" "}
+            <span style={{ color: "#ccc" }}>
+              {parseInt(totalCoins)?.toLocaleString()}
+            </span>
             <StatsDivider>|</StatsDivider>
-            Exchanges: <span style={{ color: "#ccc" }}>{parseInt(totalExchanges)?.toLocaleString()}</span>
+            Exchanges:{" "}
+            <span style={{ color: "#ccc" }}>
+              {parseInt(totalExchanges)?.toLocaleString()}
+            </span>
             <StatsDivider>|</StatsDivider>
-            Market Cap: <span style={{ color: "#ccc" }}>${(parseFloat(totalMarketCap) / 1e12)?.toFixed(2)}T</span> {" "}
+            Market Cap:{" "}
+            <span style={{ color: "#ccc" }}>
+              {currencySymbol}
+              {(
+                Math.ceil(parseFloat(totalMarketCap) * conversionValue) / 1e12
+              )?.toFixed(2)}
+              T
+            </span>{" "}
             <span
-              style={{ color: parseFloat(marketCapChange) >= 0 ? "#2ecc71" : "#cb4335" }}
+              style={{
+                color: parseFloat(marketCapChange) >= 0 ? "#2ecc71" : "#cb4335",
+              }}
             >
               {parseFloat(marketCapChange) >= 0 ? "▲" : "▼"}
               {parseFloat(marketCapChange)?.toFixed(2)}%
             </span>
             <StatsDivider>|</StatsDivider>
-            24h Vol: <span style={{ color: "#ccc" }}>${(parseFloat(total24hVolume) / 1e9)?.toFixed(2)}B</span> 
+            24h Vol:{" "}
+            <span style={{ color: "#ccc" }}>
+              {currencySymbol}
+              {/* I did this because of the decimal placing. The decimal place is correct for USD but not in PHP */}
+              {currencySymbol === "$"
+                ? (
+                    Math.ceil(parseFloat(total24hVolume) * conversionValue) /
+                    1e9
+                  )?.toFixed(2)
+                : (
+                    Math.ceil(parseFloat(total24hVolume) * conversionValue) /
+                    1e12
+                  )?.toFixed(2)}
+              B
+            </span>
             <StatsDivider>|</StatsDivider>
             {/* -JOSH  top2DominantCoins[0] - BTC 
             top2DominantCoins[1] - ETH*/}
-            Dominance: {top2DominantCoins[0]?.toUpperCase()} <span style={{ color: "#ccc" }}>{parseFloat(top2DominantCoinsChange[0])?.toFixed(2)}%</span> 
-            {" "}
-            | {top2DominantCoins[1]?.toUpperCase()} <span style={{ color: "#ccc" }}>{parseFloat(top2DominantCoinsChange[1])?.toFixed(2)}%</span>
+            Dominance: {top2DominantCoins[0]?.toUpperCase()}{" "}
+            <span style={{ color: "#ccc" }}>
+              {parseFloat(top2DominantCoinsChange[0])?.toFixed(2)}%
+            </span>{" "}
+            | {top2DominantCoins[1]?.toUpperCase()}{" "}
+            <span style={{ color: "#ccc" }}>
+              {parseFloat(top2DominantCoinsChange[1])?.toFixed(2)}%
+            </span>
           </StatsTypography>
         </Container>
       </Box>
@@ -146,8 +234,12 @@ function Navbar({
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Box
-              sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", cursor: 'pointer' }}
-              onClick ={() => navigator('/cryptolist', { replace: true })}
+              sx={{
+                display: { xs: "none", md: "flex" },
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => navigator("/cryptolist", { replace: true })}
             >
               <LogoImage src={logoPic} alt="logo" />
             </Box>
@@ -214,6 +306,14 @@ function Navbar({
                   {page?.pageName}
                 </NavButton>
               ))}
+            </Box>
+
+            <Box sx={{ mr: 2 }}>
+              <ConversionChangerButton
+                onClick={handleChangeConversionValue}
+                currencySymbol={currencySymbol}
+                isEnabled={enableConversionValueButton}
+              />
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>

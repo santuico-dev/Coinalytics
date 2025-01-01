@@ -15,6 +15,8 @@ import about_pic_2 from "../assets/about_pic_3.png";
 import Footer from "../Components/Footer";
 import { AutoAwesome, Code, TipsAndUpdates } from "@mui/icons-material";
 import ScrollToTop from "../Components/ScrollToTop";
+import Aos from "aos";
+import { useConversionContext } from "../Context/ConversionContext";
 
 /*
 ***************************
@@ -151,6 +153,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const About = () => {
   const [loading, setLoading] = useState(false);
+  const [testing, setTesting] = useState("");
 
   const {
     totalMarketCap,
@@ -162,7 +165,10 @@ const About = () => {
     totalMarketCapChange,
   } = useNavValueContext();
 
+  const { conversionValue } = useConversionContext();
+
   useEffect(() => {
+    Aos.init();
     window.scrollTo(0, 0);
     setLoading(true);
     setTimeout(() => {
@@ -188,6 +194,8 @@ const About = () => {
           sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 15 } }}
         >
           <Typography
+            data-aos="fade-right"
+            data-aos-delay="200"
             variant="h4"
             component="h1"
             gutterBottom
@@ -210,7 +218,7 @@ const About = () => {
           <MainContainer>
             {/* First Section */}
             <Grid container spacing={4} alignItems="center" sx={{ mb: 4 }}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} data-aos="fade-right" data-aos-delay="200">
                 <StyledPaper>
                   <Box
                     sx={{
@@ -252,7 +260,7 @@ const About = () => {
                   </Typography>
                 </StyledPaper>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} data-aos="fade-left" data-aos-delay="400">
                 <StyledImage src={about_pic_1} alt="Cryptocurrency Analysis" />
                 <Typography
                   align="center"
@@ -269,7 +277,7 @@ const About = () => {
 
             {/* Second Section */}
             <Grid container spacing={4} alignItems="center">
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} data-aos="fade-down" data-aos-delay="600">
                 <StyledImage src={about_pic_2} alt="Our Mission" />
                 <Typography
                   align="center"
@@ -282,7 +290,7 @@ const About = () => {
                   https://www.pymnts.com/blockchain/bitcoin/2021/crypto-market-tops-1-trillion-as-bitcoin-smashes-records/
                 </Typography>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} data-aos="fade-up" data-aos-delay="800">
                 <StyledPaper>
                   <Box
                     sx={{
@@ -306,7 +314,7 @@ const About = () => {
                         fontSize: { xs: "1.5rem", md: "1.7rem" },
                       }}
                     >
-                      Project Mission
+                      {testing}Project Mission
                     </Typography>
                   </Box>
                   <Typography
@@ -328,7 +336,7 @@ const About = () => {
           </MainContainer>
         </Container>
       </StyledBox>
-      <ScrollToTop/>
+      <ScrollToTop />
       <Footer />
     </div>
   );

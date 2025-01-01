@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Paper, Skeleton } from "@mui/material";
 import { styled } from "@mui/system";
 import axios from "axios";
+import { useConversionContext } from "../../Context/ConversionContext";
 
 const GlassContainer = styled(Paper)(({ theme }) => ({
   background: "rgba(255, 255, 255, 0.1)",
@@ -27,6 +28,8 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
   const [total24hVolume, setTotal24hVolume] = useState(0);
   const [totalMarketCapChange, setTotalMarketCapChange] = useState(0);
 
+  const { currencySymbol, conversionValue } = useConversionContext();
+
   useEffect(() => {
     fetchGlobalData();
   }, []);
@@ -42,7 +45,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
   const fetchGlobalData = async () => {
     try {
       const globalResponse = await axios.get(
-        "https://api.coingecko.com/api/v3/global",
+        "",
         {
           signal: AbortSignal.timeout(8000),
           cache: true,
@@ -70,6 +73,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
       console.log("Rate Limit Error");
     }
   };
+
   return (
     <div>
       <GlassContainer>
@@ -102,7 +106,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
                 visibility: loading ? "hidden" : "visible",
               }}
             >
-              ${totalMarketCap === 0 ? parseFloat(localStorage.getItem("totalMarketCap")).toLocaleString() : totalMarketCap?.toLocaleString()} {" "}
+              {currencySymbol}{totalMarketCap === 0 ? (parseFloat(localStorage.getItem("totalMarketCap")) * conversionValue)?.toLocaleString() : (totalMarketCap * conversionValue)?.toLocaleString()} {" "}
               <span
                 style={{
                   color: parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "#2ecc71" : "#cb4335",
@@ -146,7 +150,7 @@ const MarketCap = ({ loading, handleGetGlobalMarketCap }) => {
                 visibility: loading ? "hidden" : "visible",
               }}
             >
-              ${total24hVolume === 0 ? parseFloat(localStorage.getItem("total24hVolume")) : total24hVolume?.toLocaleString()}
+              {currencySymbol}{total24hVolume === 0 ? (parseFloat(localStorage.getItem("total24hVolume")) * conversionValue)?.toLocaleString() : (total24hVolume * conversionValue)?.toLocaleString()}
             </Typography>
           </Box>
         </Box>

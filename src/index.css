@@ -3,6 +3,11 @@
   padding: 0;
 }
 
+:root {
+  --currencySymbol: $;
+  --currentConversionValue: 0;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }

@@ -46,7 +46,7 @@ const FearGreedMeter = ({ loading }) => {
   const fetchFearGreedIndex = async () => {
     try {
       await axios
-        .get("https://api.alternative.me/fng/", {
+        .get("", {
           signal: AbortSignal.timeout(8000),
           cache: true,
         })

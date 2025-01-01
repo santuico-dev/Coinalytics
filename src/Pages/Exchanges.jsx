@@ -4,6 +4,7 @@ import { styled, keyframes } from "@mui/system";
 import Navbar from "../Components/Navbar";
 import ExchangesTable from "../Components/Tables/ExchangesTable";
 import { useNavValueContext } from "../Context/NavValueContext";
+import Aos from "aos";
 
 /*
 ***************************
@@ -107,16 +108,24 @@ const AnimatedBackground = () => {
 };
 
 const Exchanges = () => {
-
   useEffect(() => {
+    Aos.init();
     window.scrollTo(0, 0);
-  }, [])
+  }, []);
 
   //cyrpto exchanges Data
   const [topThreeExchanges, setTopThreeExchanges] = useState([]);
 
   //navbar statistics
-  const { totalMarketCap, total24hVolume, totalCoins, totalExchanges, top2DominantCoins, top2DominantCoinsChange, totalMarketCapChange } = useNavValueContext();
+  const {
+    totalMarketCap,
+    total24hVolume,
+    totalCoins,
+    totalExchanges,
+    top2DominantCoins,
+    top2DominantCoinsChange,
+    totalMarketCapChange,
+  } = useNavValueContext();
 
   const handleTopThreeExchanges = (exchangeName) => {
     try {
@@ -128,15 +137,29 @@ const Exchanges = () => {
 
   return (
     <div>
-      <Navbar 
-        totalMarketCap={totalMarketCap} 
-        total24hVolume={total24hVolume} 
-        marketCapChange={totalMarketCapChange} 
-        totalCoins={totalCoins} 
-        totalExchanges={totalExchanges}
-        top2DominantCoins={top2DominantCoins}
-        top2DominantCoinsChange={top2DominantCoinsChange}
-      />
+      {totalMarketCap === 0 ? (
+        <Navbar
+          totalMarketCap={localStorage.getItem("totalMarketCap")}
+          total24hVolume={localStorage.getItem("total24hVolume")}
+          marketCapChange={localStorage.getItem("totalMarketCapChange")}
+          totalCoins={localStorage.getItem("totalCoins")}
+          totalExchanges={localStorage.getItem("totalExchanges")}
+          top2DominantCoins={localStorage.getItem("top2DominantCoins")}
+          top2DominantCoinsChange={localStorage.getItem(
+            "top2DominantCoinsChange"
+          )}
+        />
+      ) : (
+        <Navbar
+          totalMarketCap={totalMarketCap}
+          total24hVolume={total24hVolume}
+          marketCapChange={totalMarketCapChange}
+          totalCoins={totalCoins}
+          totalExchanges={totalExchanges}
+          top2DominantCoins={top2DominantCoins}
+          top2DominantCoinsChange={top2DominantCoinsChange}
+        />
+      )}
       <StyledBox>
         <AnimatedBackground />
         <Container
@@ -144,6 +167,7 @@ const Exchanges = () => {
           sx={{ position: "relative", zIndex: 1, mt: { xs: 5, md: 14 } }}
         >
           <Typography
+            data-aos="fade-right"
             variant="h4"
             component="h1"
             gutterBottom
@@ -156,6 +180,8 @@ const Exchanges = () => {
             Top Crypto Exchanges Ranked by Trust Score
           </Typography>
           <Typography
+            data-aos="fade-down"
+            data-aos-delay="200"
             component="h6"
             gutterBottom
             sx={{

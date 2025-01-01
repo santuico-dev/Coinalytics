@@ -21,6 +21,9 @@ import {
 import { styled } from "@mui/system";
 import axios from "axios";
 import { HelpOutlineOutlined, Search } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import Aos from "aos";
+import { useConversionContext } from "../../Context/ConversionContext";
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   background: "rgba(255, 255, 255, 0.02)",
@@ -42,7 +45,7 @@ const MainContainer = styled(Container)(({ theme }) => ({
   VARIABLES  
 ***************************
 */
-const ITEMS_PER_PAGE = 99;
+const ITEMS_PER_PAGE = 94;
 const TOTAL_ASSETS = 17373;
 
 const CryptoListTable = () => {
@@ -55,8 +58,11 @@ const CryptoListTable = () => {
   const [fetchError, setFetchError] = useState(false);
 
   const [searchCoin, setSearchCoin] = useState("");
+  const navigator = useNavigate();
 
-  const totalPages = Math.ceil(TOTAL_ASSETS / ITEMS_PER_PAGE) - 2;
+  const { conversionValue, currencySymbol } = useConversionContext();
+
+  const totalPages = Math.ceil(TOTAL_ASSETS / ITEMS_PER_PAGE) - 11; // -11 kasi yung sobrang page hindi ko na macalculate since finilter ko yung coins
 
   useEffect(() => {
     fetchCryptoData(currentPage);
@@ -94,7 +100,7 @@ const CryptoListTable = () => {
         setFetchingLoading(false);
 
         const coinList = fetchCryptoResponse?.data?.Data?.LIST.filter(
-          (coin) => coin?.SYMBOL !== "USD"
+          (coin) => parseInt(coin?.TOTAL_MKT_CAP_USD) > 0
         ).map((coin) => ({
           ...coin,
         }));
@@ -122,7 +128,7 @@ const CryptoListTable = () => {
   );
   const filteredCoinData = sortedCoinDataByMarketCap.filter((coin) => {
     return coin?.NAME?.toLowerCase().includes(searchCoin.toLowerCase());
-  })
+  });
 
   const formatPrice = (price) => {
     // guard condition if null yung value ng price
@@ -131,16 +137,20 @@ const CryptoListTable = () => {
     }
 
     if (price < 0.006) {
-      return `$${price.toFixed(8)}`;
+      return `${price.toFixed(8)}`;
     } else if (price < 0.09) {
-      return `$${price.toFixed(6)}`;
+      return `${price.toFixed(6)}`;
     }
-    return `$${price.toFixed(2)}`;
+    return `${price.toFixed(2)}`;
   };
 
   const handleSearchCoin = (event) => {
     setSearchCoin(event.target.value);
-  }
+  };
+
+  const handleOpenCoinInformation = (coinSymbol) => {
+    navigator(`/viewcrypto/${coinSymbol}`);
+  };
 
   return (
     <div>
@@ -394,7 +404,10 @@ const CryptoListTable = () => {
                   </TableHead>
                   <TableBody>
                     {filteredCoinData.map((coin, index) => (
-                      <TableRow key={coin?.ID}>
+                      <TableRow
+                        key={coin?.ID}
+                        onClick={() => handleOpenCoinInformation(coin?.SYMBOL)}
+                      >
                         <TableCell sx={{ color: "#fff", fontFamily: "Kanit" }}>
                           {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                         </TableCell>
@@ -425,7 +438,9 @@ const CryptoListTable = () => {
                           </Box>
                         </TableCell>
                         <TableCell sx={{ color: "#fff", fontFamily: "Inter" }}>
-                          {formatPrice(coin?.PRICE_USD) ?? "-"}
+                          {currencySymbol}
+                          {formatPrice(coin?.PRICE_USD * conversionValue) ??
+                            "-"}
                         </TableCell>
                         {!isMobile && (
                           <>
@@ -525,10 +540,8 @@ const CryptoListTable = () => {
                             <TableCell
                               sx={{ color: "#fff", fontFamily: "Inter" }}
                             >
-                              {coin?.TOTAL_MKT_CAP_USD?.toLocaleString()
-                                .length > 0 &&
-                              parseInt(coin?.TOTAL_MKT_CAP_USD) > 0
-                                ? `$${coin?.TOTAL_MKT_CAP_USD?.toLocaleString()}`
+                              {parseInt(coin?.TOTAL_MKT_CAP_USD) > 0
+                                ? `${currencySymbol}${(coin?.TOTAL_MKT_CAP_USD * conversionValue)?.toLocaleString()}`
                                 : "-"}
                             </TableCell>
                           </>
@@ -556,7 +569,7 @@ const CryptoListTable = () => {
               onChange={(event, page) => {
                 setCurrentPage(page);
               }}
-              disabled = {fetchingLoading}
+              disabled={fetchingLoading}
               variant="outlined"
               showFirstButton
               showLastButton

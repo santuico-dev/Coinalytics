@@ -27,6 +27,7 @@ import { useParams } from "react-router-dom";
 import NewsSlider from "../Components/NewsSlider";
 import ScrollToTop from "../Components/ScrollToTop";
 import NewsFeedsTable from "../Components/Tables/NewsFeedsTable";
+import Aos from "aos";
 
 const NAVBAR_HEIGHT = "128px";
 
@@ -330,6 +331,7 @@ const Learn = () => {
   }, [sectionID, subSectionName]);
 
   useEffect(() => {
+    Aos.init();
     window.scrollTo(0, 0);
     setLoading(true);
     setTimeout(() => {
@@ -480,6 +482,7 @@ const Learn = () => {
                 <Grid item xs={12} md={9}>
                   <ContentSection>
                     <Typography
+                      data-aos="fade-right"
                       gutterBottom
                       sx={{
                         color: "#ccc",
@@ -496,7 +499,13 @@ const Learn = () => {
 
                     {currentContent?.title === "News" ? (
                       <>
-                        <Typography variant="h4" component="h1" gutterBottom>
+                        <Typography
+                          variant="h4"
+                          component="h1"
+                          gutterBottom
+                          data-aos="fade-right"
+                          data-aos-delay="200"
+                        >
                           {currentContent?.title}
                         </Typography>
                         {/* NEWS BOXES */}
@@ -504,7 +513,13 @@ const Learn = () => {
                         <Divider
                           sx={{ backgroundColor: "#ccc", mt: 4, mb: 4 }}
                         />
-                        <Typography variant="h4" component="h1" gutterBottom>
+                        <Typography
+                          variant="h4"
+                          component="h1"
+                          gutterBottom
+                          data-aos="fade-right"
+                          data-aos-delay="400"
+                        >
                           Top News Feeds
                         </Typography>
                         {/* NEWS FEEDS LIST TABLE */}
@@ -512,7 +527,13 @@ const Learn = () => {
                       </>
                     ) : (
                       <>
-                        <Typography variant="h4" component="h1" gutterBottom>
+                        <Typography
+                          variant="h4"
+                          component="h1"
+                          gutterBottom
+                          data-aos="fade-right"
+                          data-aos-delay="200"
+                        >
                           {currentContent?.title}
                         </Typography>
                         {currentContent?.image && (
@@ -530,12 +551,16 @@ const Learn = () => {
                               variant="h5"
                               component="h2"
                               gutterBottom
+                              data-aos="fade-right"
+                              data-aos-delay="600"
                             >
                               {section?.title}
                             </Typography>
                             <Typography
                               variant="body1"
                               paragraph
+                              data-aos="fade-right"
+                              data-aos-delay="800"
                               sx={{
                                 color: "#ccc",
                                 whiteSpace: "pre-line",

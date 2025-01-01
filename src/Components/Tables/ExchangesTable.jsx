@@ -22,6 +22,8 @@ import {
 import { styled } from "@mui/system";
 import axios from "axios";
 import { HelpOutlineOutlined, OpenInNew, Search } from "@mui/icons-material";
+import Aos from "aos";
+import { useConversionContext } from "../../Context/ConversionContext";
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   background: "rgba(255, 255, 255, 0.02)",
@@ -55,6 +57,8 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
   const [fetchingLoading, setFetchingLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
 
+  const { currencySymbol, conversionValue } = useConversionContext();
+
   const [searchExchanges, setSearchExchanges] = useState("");
 
   const totalPages = Math.ceil(TOTAL_ASSETS / ITEMS_PER_PAGE);
@@ -65,6 +69,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
 
   //refresh the data aagain every 1 minute?
   useEffect(() => {
+    Aos.init();
     let refreshExchangesData = setInterval(() => {
       fetchExchanges(currentPage);
       setFetchError(false);
@@ -84,7 +89,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
       setFetchingLoading(true);
 
       const fetchExchangesResponse = await axios.get(
-        `https://api.coingecko.com/api/v3/exchanges?page=${page}`,
+        ``,
         {
           signal: AbortSignal.timeout(8000),
           cache: true,
@@ -124,22 +129,28 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
 
   const handleSearchExchanges = (event) => {
     setSearchExchanges(event.target.value);
-  }
+  };
 
   const cryptoExchangesData = pageCache[currentPage] || [];
   const sortedExchangesByTrustScore = cryptoExchangesData.sort(
     (a, b) => b.trust_score - a.trust_score
   );
+
+  // search handler
   const filteredExchanges = sortedExchangesByTrustScore.filter((exchange) => {
     return exchange?.name?.toLowerCase().includes(searchExchanges.toLowerCase());
-  })
+  });
 
   return (
     <div>
       <MainContainer maxWidth="xl">
         <Box sx={{ width: "100%" }}>
           {/* SEARCH FIELD */}
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+            data-aos="fade-right"
+            data-aos-delay="400"
+          >
             <TextField
               fullWidth
               variant="outlined"
@@ -194,6 +205,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
             ) : (
               <>
                 <Table
+                  data-aos="fade-up"
                   sx={{
                     "& .MuiTableBody-root .MuiTableRow-root:hover": {
                       backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -383,8 +395,8 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
                                 color: "#fff",
                               }}
                             >
-                              $
-                              {exchange?.trade_volume_24h_btc_normalized?.toLocaleString()}
+                              {currencySymbol}
+                              {(Math.ceil(exchange?.trade_volume_24h_btc_normalized * conversionValue))?.toLocaleString()}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -393,8 +405,8 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
                                 color: "#fff",
                               }}
                             >
-                              $
-                              {exchange?.trade_volume_24h_btc?.toLocaleString()}
+                              {currencySymbol}
+                              {(Math.ceil(exchange?.trade_volume_24h_btc * conversionValue))?.toLocaleString()}
                             </TableCell>
                           </>
                         )}
@@ -420,7 +432,7 @@ const ExchangesTable = ({ handleTopThreeExchanges }) => {
               onChange={(event, page) => {
                 setCurrentPage(page);
               }}
-              disabled = {fetchingLoading}
+              disabled={fetchingLoading}
               variant="outlined"
               showFirstButton
               showLastButton

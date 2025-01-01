@@ -12,6 +12,8 @@ import {
 import { styled } from "@mui/system";
 import axios from "axios";
 import { LocalFireDepartment } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useConversionContext } from "../../Context/ConversionContext";
 
 const GlassContainer = styled(Paper)(({ theme }) => ({
   background: "rgba(255, 255, 255, 0.1)",
@@ -34,6 +36,9 @@ const GlassContainer = styled(Paper)(({ theme }) => ({
 
 const TrendingCoins = ({ loading }) => {
   const [trendingCoins, setTrendingCoins] = useState([]);
+  const navigator = useNavigate();
+
+  const { currencySymbol, conversionValue } = useConversionContext();
 
   useEffect(() => {
     fetchTrendingCoins();
@@ -50,12 +55,14 @@ const TrendingCoins = ({ loading }) => {
   const fetchTrendingCoins = async () => {
     try {
       const trendingResponse = await axios.get(
-        "https://api.coingecko.com/api/v3/search/trending",
+        "",
         {
           signal: AbortSignal.timeout(8000),
           cache: true,
         }
       );
+
+      console.log(trendingResponse?.data?.coins?.length);
 
       const topThreeCoins = trendingResponse?.data?.coins
         ?.slice(0, 3)
@@ -64,6 +71,10 @@ const TrendingCoins = ({ loading }) => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleViewCoinInformation = (coinSymbol) => {
+    navigator(`/viewcrypto/${coinSymbol}`);
   };
 
   return (
@@ -111,98 +122,128 @@ const TrendingCoins = ({ loading }) => {
             }}
           >
             <List sx={{ width: "100%" }}>
-              {trendingCoins?.map((coin) => (
-                <ListItem
-                  key={coin?.item?.id}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    py: 1,
-                    px: 2,
-                    "&:hover": {
-                      bgcolor: "rgba(255, 255, 255, 0.05)",
-                      borderRadius: 1,
-                    },
-                    transition: "background-color 0.2s",
-                  }}
-                >
-                  <Box
+              {trendingCoins.length > 0 ? (
+                trendingCoins?.map((coin) => (
+                  <ListItem
+                    key={coin?.item?.id}
                     sx={{
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: 2,
-                      flexShrink: 0,
+                      py: 1,
+                      px: 2,
+                      "&:hover": {
+                        bgcolor: "rgba(255, 255, 255, 0.05)",
+                        borderRadius: 1,
+                      },
+                      transition: "background-color 0.2s",
+                      cursor: "pointer",
                     }}
+                    onClick={() =>
+                      handleViewCoinInformation(coin?.item?.symbol)
+                    }
                   >
-                    {loading ? (
-                      <Skeleton
-                        variant="circular"
-                        width={40}
-                        height={40}
-                        sx={{ bgcolor: "#979a9a" }}
-                      />
-                    ) : (
-                      <Avatar
-                        src={coin?.item?.small}
-                        alt={coin?.item?.name}
-                        sx={{ width: 32, height: 32 }}
-                      />
-                    )}
-                    <Box>
-                      {loading ? (
-                        <Skeleton
-                          width={230}
-                          height={40}
-                          sx={{ bgcolor: "#979a9a" }}
-                        />
-                      ) : (
-                        <Typography
-                          sx={{
-                            color: "white",
-                            whiteSpace: "nowrap",
-                            fontFamily: "Kanit",
-                          }}
-                        >
-                          {coin?.item?.name}
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                  <Box sx={{ textAlign: "right", flexShrink: 0 }}>
-                    <Typography
-                      sx={{
-                        color: "white",
-                        fontFamily: "Kanit",
-                        visibility: loading ? "hidden" : "visible",
-                      }}
-                    >
-                      ${coin?.item?.data?.price?.toFixed(2)}
-                    </Typography>
                     <Box
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "flex-end",
-                        color:
-                          coin?.item?.data?.price_change_percentage_24h?.usd >=
-                          0
-                            ? "#2ecc71"
-                            : "#cb4335",
+                        gap: 2,
+                        flexShrink: 0,
                       }}
                     >
-                      <Typography sx={{ fontFamily: "Kanit", visibility : loading ? "hidden" : "visible" }}>
-                        {coin?.item?.data?.price_change_percentage_24h?.usd >= 0
-                          ? "▲"
-                          : "▼"}{" "}
-                        {Math.abs(
-                          coin?.item?.data?.price_change_percentage_24h?.usd
-                        ).toFixed(2)}%
-                      </Typography>
+                      {loading ? (
+                        <Skeleton
+                          variant="circular"
+                          width={40}
+                          height={40}
+                          sx={{ bgcolor: "#979a9a" }}
+                        />
+                      ) : (
+                        <Avatar
+                          src={coin?.item?.small}
+                          alt={coin?.item?.name}
+                          sx={{ width: 32, height: 32 }}
+                        />
+                      )}
+                      <Box>
+                        {loading ? (
+                          <Skeleton
+                            width={230}
+                            height={40}
+                            sx={{ bgcolor: "#979a9a" }}
+                          />
+                        ) : (
+                          <Typography
+                            sx={{
+                              color: "white",
+                              whiteSpace: "nowrap",
+                              fontFamily: "Kanit",
+                            }}
+                          >
+                            {coin?.item?.name}
+                          </Typography>
+                        )}
+                      </Box>
                     </Box>
-                  </Box>
-                </ListItem>
-              ))}
+                    <Box sx={{ textAlign: "right", flexShrink: 0 }}>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          fontFamily: "Kanit",
+                          visibility: loading ? "hidden" : "visible",
+                        }}
+                      >
+                        {currencySymbol}
+                        {coin?.item?.data?.price === 0.0
+                          ? (
+                              coin?.item?.data?.price * conversionValue
+                            )?.toFixed(8)
+                          : (
+                              coin?.item?.data?.price * conversionValue
+                            )?.toFixed(2)}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                          color:
+                            coin?.item?.data?.price_change_percentage_24h
+                              ?.usd >= 0
+                              ? "#2ecc71"
+                              : "#cb4335",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontFamily: "Kanit",
+                            visibility: loading ? "hidden" : "visible",
+                          }}
+                        >
+                          {coin?.item?.data?.price_change_percentage_24h?.usd >=
+                          0
+                            ? "▲"
+                            : "▼"}{" "}
+                          {coin?.item?.data?.price_change_percentage_24h?.usd?.toFixed(
+                            2
+                          )}
+                          %
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </ListItem>
+                ))
+              ) : (
+                <Typography
+                  align="center"
+                  sx={{
+                    fontFamily: "Kanit",
+                    visibility: loading ? "hidden" : "visible",
+                  }}
+                >
+                 No trending coins available as of this moment.
+                </Typography>
+              )}
             </List>
           </Box>
         </Box>

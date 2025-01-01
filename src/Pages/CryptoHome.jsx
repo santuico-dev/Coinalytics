@@ -9,6 +9,9 @@ import FearGreedMeter from "../Components/Boxes/FearGreedMeter";
 import { useNavValueContext } from "../Context/NavValueContext";
 import Footer from "../Components/Footer";
 import ScrollToTop from "../Components/ScrollToTop";
+import Aos from "aos";
+import axios from "axios";
+import { useConversionContext } from "../Context/ConversionContext";
 
 /*
 ***************************
@@ -112,7 +115,6 @@ const AnimatedBackground = () => {
 };
 
 const CryptoHome = () => {
-
   const [loading, setLoading] = useState(false);
   const [totalGlobalMarketCap, setTotalGlobalMarketCap] = useState(0);
   const [marketCap24hChange, setMarketCap24hChange] = useState(0);
@@ -121,9 +123,29 @@ const CryptoHome = () => {
   const [totalGlobalExchanges, setTotalGlobalExchanges] = useState(0);
 
   const [top2DominantCoins, setTop2DominantCoins] = useState([]);
-  const [top2DominantCoinsPercentage, setTop2DominantCoinsPercentage] = useState([]);
+  const [top2DominantCoinsPercentage, setTop2DominantCoinsPercentage] =
+    useState([]);
 
-  const { setTotalMarketCap, setTotalMarketCapChange, setTotal24hrsVolume, setTotal24hrsVolumeChange, setTotalCoins, setTotalExchanges, set2DominantCoins, setTop2DominantCoinsChange } = useNavValueContext();
+  const {
+    setTotalMarketCap,
+    setTotalMarketCapChange,
+    setTotal24hrsVolume,
+    setTotal24hrsVolumeChange,
+    setTotalCoins,
+    setTotalExchanges,
+    set2DominantCoins,
+    setTop2DominantCoinsChange,
+  } = useNavValueContext();
+
+  const {
+    currencySymbol,
+    conversionValue,
+    philippineConversionValue,
+    usdConversionValue,
+    setConversionValue,
+    setPhilippineConversionValue,
+    setUsdConversionValue,
+  } = useConversionContext();
 
   useEffect(() => {
     window.scroll(0, 0);
@@ -132,6 +154,41 @@ const CryptoHome = () => {
       setLoading(false);
     }, 2000);
   }, []);
+
+  useEffect(() => {
+    fetchConversionValue();
+  }, [usdConversionValue, philippineConversionValue]);
+
+  const fetchConversionValue = async () => {
+    try {
+      //guard condition to avoid calling it again
+      if (usdConversionValue !== 0 && philippineConversionValue !== 0) {
+        return;
+      }
+
+      const conversionValueResponse = await axios.get(
+        "",
+        {
+          signal: AbortSignal.timeout(8000),
+          cache: true,
+        }
+      );
+
+      if (conversionValueResponse?.data?.result === "success") {
+        setConversionValue(
+          conversionValueResponse?.data?.conversion_rates?.USD
+        ); //if ever na mag update yung rating ng USD
+        setUsdConversionValue(
+          conversionValueResponse?.data?.conversion_rates?.USD
+        ); //for conversion option purposes, if gusto ni user ibalik from PHP -> USD
+        setPhilippineConversionValue(
+          conversionValueResponse?.data?.conversion_rates?.PHP
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleGetGlobalMarketCap = (
     globalMarketCap,
@@ -161,7 +218,6 @@ const CryptoHome = () => {
       setTotalExchanges(globalTotalExchanges);
       set2DominantCoins(top2DominantCoins);
       setTop2DominantCoinsChange(top2DominantCoinsPercentage);
-      
     } catch (error) {
       console.log(error);
     }
@@ -170,11 +226,11 @@ const CryptoHome = () => {
   //TODO: To Filters, Search Bar, converter, and more
   return (
     <div>
-      <Navbar 
-        totalMarketCap={totalGlobalMarketCap} 
-        total24hVolume={total24hVolume} 
-        marketCapChange={marketCap24hChange} 
-        totalCoins={totalGlobalCoins} 
+      <Navbar
+        totalMarketCap={totalGlobalMarketCap}
+        total24hVolume={total24hVolume}
+        marketCapChange={marketCap24hChange}
+        totalCoins={totalGlobalCoins}
         totalExchanges={totalGlobalExchanges}
         top2DominantCoins={top2DominantCoins}
         top2DominantCoinsChange={top2DominantCoinsPercentage}
@@ -207,13 +263,33 @@ const CryptoHome = () => {
               fontFamily: "Kanit",
             }}
           >
-            The global cryptocurrency market cap today is $
-            {totalGlobalMarketCap === 0 ? parseFloat(localStorage.getItem("totalMarketCap") / 1e12)?.toFixed(2) : (totalGlobalMarketCap / 1e12).toFixed(2)} Trillion, a {" "}
+            The global cryptocurrency market cap today is {currencySymbol}
+            {totalGlobalMarketCap === 0
+              ? Math.ceil(
+                  parseFloat(localStorage.getItem("totalMarketCap") / 1e12) *
+                    conversionValue
+                )?.toFixed(2)
+              : (
+                  Math.ceil(totalGlobalMarketCap * conversionValue) / 1e12
+                ).toFixed(2)}{" "}
+            Trillion, a{" "}
             <span
-              style={{ color: parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "#2ecc71" : "#cb4335" }}
+              style={{
+                color:
+                  parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0
+                    ? "#2ecc71"
+                    : "#cb4335",
+              }}
             >
-              {parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0 ? "▲" : "▼"} {parseFloat(localStorage.getItem("totalMarketCapChange"))?.toFixed(2)}%
-            </span> change in the last 24 hours.
+              {parseFloat(localStorage.getItem("totalMarketCapChange")) >= 0
+                ? "▲"
+                : "▼"}{" "}
+              {parseFloat(
+                localStorage.getItem("totalMarketCapChange")
+              )?.toFixed(2)}
+              %
+            </span>{" "}
+            change in the last 24 hours.
           </Typography>
           <Grid container spacing={3} sx={{ mb: 4 }}>
             {/* MARKET CAP & 24 HR VOLUME */}
@@ -238,8 +314,8 @@ const CryptoHome = () => {
           <CryptoListTable />
         </Container>
       </StyledBox>
-      <ScrollToTop/>
-      <Footer/>
+      <ScrollToTop />
+      <Footer />
     </div>
   );
 };
