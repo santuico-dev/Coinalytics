@@ -62,8 +62,6 @@ const TrendingCoins = ({ loading }) => {
         }
       );
 
-      console.log(trendingResponse?.data?.coins?.length);
-
       const topThreeCoins = trendingResponse?.data?.coins
         ?.slice(0, 3)
         .sort((a, b) => a.item.score - b.item.score);
